@@ -1,0 +1,42 @@
+POST https://localhost:5000/api/user/register HTTP/1.1
+content-type: application/json
+
+{
+    "username": "userpe",
+    "fullName": "user pe",
+    "accountNumber": "0228811777",
+    "idNumber": "0223488711882",
+    "password": "@User123"
+} 
+
+
+###
+POST https://localhost:5000/api/user/login HTTP/1.1
+content-type: application/json
+
+{
+    "username": "userre",
+    "fullName": "user re",
+    "accountNumber": "0223711777",
+    "idNumber": "0223456711882",
+    "password": "@User123"
+} 
+
+
+###
+GET  https://localhost:5000/api/payment/6702c11fee71447ffed97d2b HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIiLCJpYXQiOjE3MjgyNTQ0NzYsImV4cCI6MTcyODI1ODA3Nn0.NKf_ijYmUawGbyS9u-E8tfkCJ_R13LELQmcyGmEfbNg
+
+
+###
+POST  https://localhost:5000/api/payment HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIiLCJpYXQiOjE3MjgyNTQ0NzYsImV4cCI6MTcyODI1ODA3Nn0.NKf_ijYmUawGbyS9u-E8tfkCJ_R13LELQmcyGmEfbNg
+content-type: application/json
+
+{
+    "amount": 2000.00,
+    "bankName": "SWIFT",
+    "swiftCode": "HSBCGB7G",
+    "currency": "ZAR",
+    "userId": "6702c11fee71447ffed97d2b"
+} 
