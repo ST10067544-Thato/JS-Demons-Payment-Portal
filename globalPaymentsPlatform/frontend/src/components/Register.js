@@ -19,14 +19,10 @@ function Register() {
   const navigate = useNavigate();
 
   // Function to handle the user registration process
-const handleRegister = async (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
     try {
       // Sends a POST request to the registration API with user details
-      // This router was adapted from geeskforgeeks
-      // https://www.geeksforgeeks.org/how-to-build-a-basic-crud-app-with-node-js-and-reactjs/
-      // braktim99
-      // https://www.geeksforgeeks.org/user/braktim99/contributions/?itm_source=geeksforgeeks&itm_medium=article_author&itm_campaign=auth_user
       await axios.post('https://localhost:5000/api/user/register', { username, fullName, idNumber, accountNumber, password });
       
       // If successful, set a success message and open a notification dialog
@@ -123,3 +119,4 @@ const handleRegister = async (e) => {
 }
 
 export default Register;
+

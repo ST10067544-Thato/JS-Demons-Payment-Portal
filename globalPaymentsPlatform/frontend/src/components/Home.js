@@ -44,6 +44,14 @@ function Home() {
       <Button 
         variant="contained" 
         color="secondary" 
+        onClick={() => navigate('/employee-dashboard')} 
+        style={{ margin: '10px' }}
+      >
+        Employee Dashboard
+      </Button>
+      <Button 
+        variant="contained" 
+        color="secondary" 
         onClick={() => navigate('/register')} 
         style={{ margin: '10px' }}
       >

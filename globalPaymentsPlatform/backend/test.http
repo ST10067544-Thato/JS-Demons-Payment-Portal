@@ -24,19 +24,22 @@ content-type: application/json
 
 
 ###
-GET  https://localhost:5000/api/payment/6702c11fee71447ffed97d2b HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIiLCJpYXQiOjE3MjgyNTQ0NzYsImV4cCI6MTcyODI1ODA3Nn0.NKf_ijYmUawGbyS9u-E8tfkCJ_R13LELQmcyGmEfbNg
+GET  https://localhost:5000/api/payment/672e3d2570e88aa68b9b4c37 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXJyZSIsImlhdCI6MTczMTA4MzA2NSwiZXhwIjoxNzMxMDg2NjY1fQ.QvBC7hSbfqV4GBwIjzaHUDU97GRV1fVwNMU_yp4LIzA
 
 
 ###
 POST  https://localhost:5000/api/payment HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIiLCJpYXQiOjE3MjgyNTQ0NzYsImV4cCI6MTcyODI1ODA3Nn0.NKf_ijYmUawGbyS9u-E8tfkCJ_R13LELQmcyGmEfbNg
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXJyZSIsImlhdCI6MTczMTA4MzA2NSwiZXhwIjoxNzMxMDg2NjY1fQ.QvBC7hSbfqV4GBwIjzaHUDU97GRV1fVwNMU_yp4LIzA
 content-type: application/json
 
 {
     "amount": 2000.00,
-    "bankName": "SWIFT",
-    "swiftCode": "HSBCGB7G",
     "currency": "ZAR",
+    "bankName": "ABSA",
+    "swiftCode": "HSBCGB7G",
+    "reference": "FUCKYOU",
+    "recipientName": "Malik Mannan",
+    "accountNumber": "9332911302",
     "userId": "6702c11fee71447ffed97d2b"
 } 

@@ -6,6 +6,8 @@ import Register from './components/Register';
 import Home from './components/Home'; // Add this line to import Home
 import PaymentInfo from './components/PaymentInfo'; // Import PaymentInfo component
 import PaymentDetails from './components/PaymentDetails'; // Import PaymentDetails component
+import EmployeeDashboard from './components/EmployeeDashboard'; // Import EmployeeDashboard component
+
 
 // Define a custom theme with shades of green and black
 const theme = createTheme({
@@ -33,6 +35,7 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/payment-info" element={<PaymentInfo />} /> {/* Payment Info Route */}
             <Route path="/payment-details" element={<PaymentDetails />} /> {/* Payment Details Route */}
+            <Route path="/employee-dashboard" element={<EmployeeDashboard />} />
           </Routes>
         </div>
       </Router>

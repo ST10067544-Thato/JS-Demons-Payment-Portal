@@ -3,16 +3,16 @@
 // abdullahaz93z
 // https://www.geeksforgeeks.org/user/abdullahaz93z/contributions/?itm_source=geeksforgeeks&itm_medium=article_author&itm_campaign=auth_user
 
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
-// Mongoose schema to store users in Mongodb
+// Mongoose schema to store users in MongoDB
 const userSchema = new mongoose.Schema({ 
     username: {
         type: String,
         required: true,
         trim: true,
         unique: true,
-        match: [/^[A-Za-z\s]+$/, 'Username can only contain letters and spaces'] 
+        match: [/^[A-Za-z0-9!@#$%^&*()_+=\-{}[\]:;"'<>,.?/\\|~`]+$/, 'Username can only contain letters, numbers, and symbols, with no spaces'] 
     },
     fullName: {
         type: String,
@@ -35,6 +35,6 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     }
-})
+});
 
-module.exports = mongoose.model('User', userSchema) 
+module.exports = mongoose.model('User', userSchema);

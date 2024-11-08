@@ -1,6 +1,7 @@
 const router = require('express').Router()
 const Payment = require('../models/Payment')
 const authMiddleware = require('../middleware/authMiddleware')
+const express = require('express');
 
 // Payment POST Route
 router.post('/', authMiddleware, async (req, res) => {
@@ -84,6 +85,80 @@ router.get('/:id', authMiddleware,  async (req, res) => {
     }
 })
 
+// Server-side route to verify a payment
+router.put('/verify/:paymentId', async (req, res) => {
+    const { paymentId } = req.params;
+  
+    try {
+      const payment = await Payment.findById(paymentId);
+  
+      if (!payment) {
+        return res.status(404).json({ message: 'Payment not found' });
+      }
+  
+      // Update the payment status to 'verified'
+      payment.status = 'verified';
+      await payment.save();
+  
+      res.json({ message: 'Payment verified successfully' });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Error verifying payment' });
+    }
+})
 
+// Route to get all payments
+router.get('/', async (req, res) => {
+    try {
+        const payments = await Payment.find(); // Get all payments regardless of their status
+        res.json(payments);  // Send back the payments as a JSON response
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching payments', error: error.message });
+    }
+});
+
+// Route to toggle the payment status
+router.put('/toggle-status/:paymentId', async (req, res) => {
+    const { paymentId } = req.params;
+
+    try {
+        const payment = await Payment.findById(paymentId);
+
+        if (!payment) {
+            return res.status(404).json({ message: 'Payment not found' });
+        }
+
+        // Toggle the payment status between 'verified' and 'pending'
+        payment.status = payment.status === 'verified' ? 'pending' : 'verified';
+        await payment.save();
+
+        res.json({ message: 'Payment status updated successfully', status: payment.status });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error updating payment status' });
+    }
+})
+
+// Route to revert a payment status to 'pending'
+router.put('/revert/:paymentId', async (req, res) => {
+    const { paymentId } = req.params;
+  
+    try {
+      const payment = await Payment.findById(paymentId);
+  
+      if (!payment) {
+        return res.status(404).json({ message: 'Payment not found' });
+      }
+  
+      // Revert the payment status to 'pending'
+      payment.status = 'pending';
+      await payment.save();
+  
+      res.json({ message: 'Payment reverted to pending' });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Error reverting payment' });
+    }
+  });  
 
 module.exports = router 
