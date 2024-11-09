@@ -109,7 +109,7 @@ function Login() {
         />
         <Button variant="contained" color="primary" fullWidth type="submit" style={{ marginTop: '20px' }}>Login</Button>
         <Typography variant="body2" align="center" style={{ marginTop: '20px' }}>
-          Don't have an account? <Button onClick={() => navigate('/register')} color="primary">Register here</Button>
+        Don't have an account?<Button onClick={() => navigate('')} color="primary">Contact Admin</Button>
         </Typography>
       </form>
     </Container>

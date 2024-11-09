@@ -112,14 +112,14 @@ function CustomerDashboard() {
     localStorage.removeItem('userId'); // Clear the user ID
     localStorage.removeItem('role'); // Clear role
 
-    setMessage('You have been logged out successfully!');
+    setMessage('Logout successful! Redirecting to homepage...');
     setOpenSnackbar(true);
 
     // Redirect to the login page after showing the message
     setTimeout(() => {
       setPayments([]); // Clear the payments on logout
       navigate('/');
-    }, 1500); // Wait for 2 seconds before redirecting
+    }, 1200); // Wait for 1.2 seconds before redirecting
   };
 
   return (

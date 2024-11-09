@@ -1,25 +1,20 @@
-POST https://localhost:5000/api/user/register HTTP/1.1
-content-type: application/json
-
-{
-    "username": "userpe",
-    "fullName": "user pe",
-    "accountNumber": "0228811777",
-    "idNumber": "0223488711882",
-    "password": "@User123"
-} 
-
-
-###
+### Customer Login
 POST https://localhost:5000/api/user/login HTTP/1.1
 content-type: application/json
 
 {
-    "username": "userre",
-    "fullName": "user re",
-    "accountNumber": "0223711777",
-    "idNumber": "0223456711882",
-    "password": "@User123"
+    "username": "IsaacTest2",
+    "accountNumber": "8251882365",
+    "password": "@IsaacTest2!"
+}
+
+### Employee Login
+POST https://localhost:5000/api/user/login HTTP/1.1
+content-type: application/json
+{
+    "username": "IsaacTest1",
+    "accountNumber": "7630051544",
+    "password": "@IsaacTest1!"
 } 
 
 
@@ -28,18 +23,18 @@ GET  https://localhost:5000/api/payment/672e3d2570e88aa68b9b4c37 HTTP/1.1
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXJyZSIsImlhdCI6MTczMTA4MzA2NSwiZXhwIjoxNzMxMDg2NjY1fQ.QvBC7hSbfqV4GBwIjzaHUDU97GRV1fVwNMU_yp4LIzA
 
 
-###
+### Customer Payment
 POST  https://localhost:5000/api/payment HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXJyZSIsImlhdCI6MTczMTA4MzA2NSwiZXhwIjoxNzMxMDg2NjY1fQ.QvBC7hSbfqV4GBwIjzaHUDU97GRV1fVwNMU_yp4LIzA
+Authorization (Bearer Token): eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IklzYWFjVGVzdDIiLCJyb2xlIjoiY3VzdG9tZXIiLCJpYXQiOjE3MzExODMwMjIsImV4cCI6MTczMTE4NjYyMn0.7q4O2Nr3bBGZ9du9VadQANp6eT4YilKLbT9bbqMNF0Y
 content-type: application/json
 
 {
-    "amount": 2000.00,
+    "amount": 250.10,
     "currency": "ZAR",
     "bankName": "ABSA",
     "swiftCode": "HSBCGB7G",
-    "reference": "FUCKYOU",
-    "recipientName": "Malik Mannan",
+    "reference": "SterKinekorSubscription",
+    "recipientName": "Owner",
     "accountNumber": "9332911302",
-    "userId": "6702c11fee71447ffed97d2b"
+    "userId": "672fc14f29331230c96a7156"
 } 

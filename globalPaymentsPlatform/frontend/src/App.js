@@ -2,7 +2,6 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import Login from './components/Login';
-import Register from './components/Register';
 import Home from './components/Home'; // Add this line to import Home
 import PaymentInfo from './components/PaymentInfo'; // Import PaymentInfo component
 import PaymentDetails from './components/PaymentDetails'; // Import PaymentDetails component
@@ -53,9 +52,8 @@ function App() {
       <Router>
         <div style={{ padding: '20px' }}>
           <Routes>
-            <Route path="/" element={<Home />} />  {/* Home Route */}
+            <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
 
             {/* Protect CustomerDashboard, PaymentInfo and PaymentDetails routes */}
             <Route path="/customer-dashboard" element={<PrivateRoute element={<CustomerDashboard />} />}/>

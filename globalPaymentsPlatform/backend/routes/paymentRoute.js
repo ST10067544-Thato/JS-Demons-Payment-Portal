@@ -102,6 +102,50 @@ router.get('/', async (req, res) => {
     }
 });
 
+// Server-side route to verify a payment
+router.put('/verify/:paymentId', async (req, res) => {
+    const { paymentId } = req.params;
+  
+    try {
+      const payment = await Payment.findById(paymentId);
+  
+      if (!payment) {
+        return res.status(404).json({ message: 'Payment not found' });
+      }
+  
+      // Update the payment status to 'verified'
+      payment.status = 'verified';
+      await payment.save();
+  
+      res.json({ message: 'Payment verified successfully' });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Error verifying payment' });
+    }
+});
+
+// Route to revert a payment status to 'pending'
+router.put('/revert/:paymentId', async (req, res) => {
+    const { paymentId } = req.params;
+  
+    try {
+      const payment = await Payment.findById(paymentId);
+  
+      if (!payment) {
+        return res.status(404).json({ message: 'Payment not found' });
+      }
+  
+      // Revert the payment status to 'pending'
+      payment.status = 'pending';
+      await payment.save();
+  
+      res.json({ message: 'Payment reverted to pending' });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Error reverting payment' });
+    }
+  });
+
 // Route to toggle the payment status [this is for the employee-dashboard page]
 router.put('/toggle-status/:paymentId', async (req, res) => {
     const { paymentId } = req.params;

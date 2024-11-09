@@ -94,13 +94,13 @@ function EmployeeDashboard() {
     localStorage.removeItem('token');
     localStorage.removeItem('userId');
     localStorage.removeItem('role'); // Clear role
-    setMessage('You have been logged out successfully!');
+    setMessage('Logout successful! Redirecting to homepage...');
     setOpenSnackbar(true);
 
     // Redirect to the home page after showing the message
     setTimeout(() => {
       navigate('/');
-    }, 1500); // Wait for 2 seconds before redirecting
+    }, 1200); // Wait for 1.2 seconds before redirecting
   };
 
   const handleCloseSnackbar = () => {
