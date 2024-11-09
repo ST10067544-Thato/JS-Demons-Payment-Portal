@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { TextField, Button, Typography, Container, Snackbar } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
@@ -16,23 +16,46 @@ function Login() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
 
+  // Check if the user is already logged in and redirect
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const role = localStorage.getItem('role');
+    
+    if (token) {
+      // If a user is logged in, navigate based on their role
+      if (role === 'employee') {
+        navigate('/employee-dashboard');
+      } else {
+        navigate('/customer-dashboard');
+      }
+    }
+  }, [navigate]);
+
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      // Sends a POST request to the registration API with user details
-      // This router was adapted from geeskforgeeks
-      // https://www.geeksforgeeks.org/how-to-build-a-basic-crud-app-with-node-js-and-reactjs/
-      // braktim99
-      // https://www.geeksforgeeks.org/user/braktim99/contributions/?itm_source=geeksforgeeks&itm_medium=article_author&itm_campaign=auth_user
+      // Sends a POST request to the login API with user details
       const response = await axios.post('https://localhost:5000/api/user/login', { username, accountNumber, password });
+      
+      // Store the token, userId, and role
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('userId', response.data.userId);
-      // If successful, set a success message and open a notification dialog
-      setMessage('Login successful! Redirecting to payment...');
+      localStorage.setItem('role', response.data.role);
+      
+      // Check user role from response and redirect accordingly
+      const role = response.data.role;
+      setMessage('Login successful! Redirecting to dashboard...');
       setOpen(true);
+
       setTimeout(() => {
-        navigate('/payment-info');
+        if (role === 'employee') {
+          navigate('/employee-dashboard');
+        } else {
+          // Redirect to customer dashboard
+          navigate('/customer-dashboard');
+        }
       }, 2000);
+      
     } catch (err) {
       setMessage('Invalid credentials. Please try again.');
       setOpen(true);

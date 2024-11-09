@@ -14,11 +14,16 @@ router.post('/register', async (req, res) => {
     // bezkoder
     // https://www.bezkoder.com/author/bezkoder/
     try {
-        const { username, fullName, idNumber, accountNumber, password } = req.body;
+        const { username, fullName, idNumber, accountNumber, password, role = 'customer' } = req.body;
 
         const usernamePattern = /^[a-zA-Z0-9_-]{3,15}$/; // Username: 3-15 characters
         const accountNumberPattern = /^[0-9]+$/; // Account number: Numeric only
         const idNumberPattern = /^[0-9]{13}$/; // ID number: Exactly 13 digits
+
+        // Validate role input if it’s provided
+        if (role !== 'customer' && role !== 'employee') {
+            return res.status(400).send('Invalid role. Must be either "customer" or "employee".');
+        }
 
         // Validate username inputs
         if (!usernamePattern.test(username)) {
@@ -60,8 +65,16 @@ router.post('/register', async (req, res) => {
         // Hash the password and store user data if all validations pass
         const hashedPassword = await bcrypt.hash(password, 10);
         
-        // Create a new User object using the provided data
-        const newUser = new User({ username: sanitizedUsername, fullName, idNumber: sanitizedIdNumber, accountNumber: sanitizedAccountNumber, password: hashedPassword });
+        // Create a new User object with the role
+        const newUser = new User({
+            username: sanitizedUsername,
+            fullName,
+            idNumber: sanitizedIdNumber,
+            accountNumber: sanitizedAccountNumber,
+            password: hashedPassword,
+            role // Add role to the user
+        });
+
         // Save the user to the database
         await newUser.save();
         res.status(201).send('User registered successfully.');
@@ -110,8 +123,8 @@ router.post('/login', bruteForce.prevent, loginAttemptLogger, async (req, res) =
         
         // If user is found and password matches, generate a JWT token
         if (user && isMatch) {
-            const token = jwt.sign({ username }, process.env.JWT_SEC, { expiresIn: '1h' });
-            res.status(201).json({ token, userId: user._id });
+            const token = jwt.sign({ username, role: user.role }, process.env.JWT_SEC, { expiresIn: '1h' });
+            res.status(201).json({ token, userId: user._id, role: user.role });
         } else {
                         // If credentials are invalid, return a 400 response
             res.status(400).send('Invalid credentials');
@@ -122,6 +135,5 @@ router.post('/login', bruteForce.prevent, loginAttemptLogger, async (req, res) =
         res.status(500).json({ message: "Server error", error });
     }
 });
-
 
 module.exports = router 

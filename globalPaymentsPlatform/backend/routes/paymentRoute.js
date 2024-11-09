@@ -1,7 +1,8 @@
 const router = require('express').Router()
 const Payment = require('../models/Payment')
+const User = require('../models/User'); // Make sure User model is correctly imported
 const authMiddleware = require('../middleware/authMiddleware')
-const express = require('express');
+const { ObjectId } = require('mongodb');  // Make sure you import ObjectId
 
 // Payment POST Route
 router.post('/', authMiddleware, async (req, res) => {
@@ -63,61 +64,45 @@ router.post('/', authMiddleware, async (req, res) => {
     }
 });
 
-// Payment GET Route
-router.get('/:id', authMiddleware,  async (req, res) => {
+// Payment GET Route [this is for the customer-dashboard page]
+router.get('/:userId', authMiddleware, async (req, res) => {
     // This router was adapted from geeskforgeeks
     // https://www.geeksforgeeks.org/how-to-build-a-basic-crud-app-with-node-js-and-reactjs/
     // braktim99
     // https://www.geeksforgeeks.org/user/braktim99/contributions/?itm_source=geeksforgeeks&itm_medium=article_author&itm_campaign=auth_user
+    const { userId } = req.params;  // Get the userId from the URL
+
     try {
-        // Fetch all payment records from the database
-        const payments = await Payment.find();
-        console.log(payments)
-        // Respond with the retrieved payment data
+        // Convert the userId to an ObjectId before querying the database
+        const userObjectId = new ObjectId(userId);
+
+        // Fetch payments for the specific user
+        const payments = await Payment.find({ userId: userObjectId }); // Filter payments by userId (as ObjectId)
+        
         res.status(200).json({
-            message: "user transactions retrieved",
+            message: "User transactions retrieved",
             transactions: payments
         });
     } catch (err) {
-        // return a 500 status with an error message for a server error
-        console.error('Error getting posts', err);
+        console.error('Error getting payments', err);
         res.status(500).json({ message: 'Server error', error: err });
-    }
-})
-
-// Server-side route to verify a payment
-router.put('/verify/:paymentId', async (req, res) => {
-    const { paymentId } = req.params;
-  
-    try {
-      const payment = await Payment.findById(paymentId);
-  
-      if (!payment) {
-        return res.status(404).json({ message: 'Payment not found' });
-      }
-  
-      // Update the payment status to 'verified'
-      payment.status = 'verified';
-      await payment.save();
-  
-      res.json({ message: 'Payment verified successfully' });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Error verifying payment' });
-    }
-})
-
-// Route to get all payments
-router.get('/', async (req, res) => {
-    try {
-        const payments = await Payment.find(); // Get all payments regardless of their status
-        res.json(payments);  // Send back the payments as a JSON response
-    } catch (error) {
-        res.status(500).json({ message: 'Error fetching payments', error: error.message });
     }
 });
 
-// Route to toggle the payment status
+// Route to get all payments [this is for the employee-dashboard page]
+router.get('/', async (req, res) => {
+    try {
+        const payments = await Payment.find().populate('userId', 'fullName'); // Populate userId with fullName
+        res.json({
+            message: "user transactions retrieved",
+            transactions: payments
+        });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+});
+
+// Route to toggle the payment status [this is for the employee-dashboard page]
 router.put('/toggle-status/:paymentId', async (req, res) => {
     const { paymentId } = req.params;
 
@@ -137,28 +122,6 @@ router.put('/toggle-status/:paymentId', async (req, res) => {
         console.error(error);
         res.status(500).json({ message: 'Error updating payment status' });
     }
-})
-
-// Route to revert a payment status to 'pending'
-router.put('/revert/:paymentId', async (req, res) => {
-    const { paymentId } = req.params;
-  
-    try {
-      const payment = await Payment.findById(paymentId);
-  
-      if (!payment) {
-        return res.status(404).json({ message: 'Payment not found' });
-      }
-  
-      // Revert the payment status to 'pending'
-      payment.status = 'pending';
-      await payment.save();
-  
-      res.json({ message: 'Payment reverted to pending' });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Error reverting payment' });
-    }
-  });  
+}) 
 
 module.exports = router 

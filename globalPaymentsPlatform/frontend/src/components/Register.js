@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { TextField, Button, Typography, Container, Snackbar } from '@mui/material';
+import { TextField, Button, Typography, Container, Snackbar, MenuItem, Select, InputLabel, FormControl } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import MuiAlert from '@mui/lab/Alert';
 
@@ -14,29 +14,25 @@ function Register() {
   const [idNumber, setIdNumber] = useState('');
   const [accountNumber, setAccountNumber] = useState('');
   const [password, setPassword] = useState('');
+  const [role, setRole] = useState('customer'); // Default role set to 'customer'
   const [message, setMessage] = useState('');
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
 
-  // Function to handle the user registration process
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      // Sends a POST request to the registration API with user details
-      await axios.post('https://localhost:5000/api/user/register', { username, fullName, idNumber, accountNumber, password });
+      await axios.post('https://localhost:5000/api/user/register', { username, fullName, idNumber, accountNumber, password, role });
       
-      // If successful, set a success message and open a notification dialog
       setMessage('Registration successful! Redirecting to login...');
       setOpen(true);
       
-      // Wait for 2 seconds, then navigate to the login page
       setTimeout(() => {
         navigate('/login');
       }, 2000);
     } catch (err) {
-      // If there is an error during registration, display the error message
       setMessage(`Registration failed. Please try again. ${err.message}`);
-      setOpen(true); // Open the notification dialog to show the error
+      setOpen(true);
     }
   };
 
@@ -58,7 +54,7 @@ function Register() {
           margin="normal"
           value={username}
           onChange={(e) => {
-            const value = e.target.value.replace(/\s/g, ''); // Remove spaces
+            const value = e.target.value.replace(/\s/g, ''); 
             setUsername(value);
           }}
           required
@@ -70,7 +66,7 @@ function Register() {
           margin="normal"
           value={fullName}
           onChange={(e) => {
-            const value = e.target.value.replace(/[^a-zA-Z\s]/g, ''); // Allow only letters and spaces
+            const value = e.target.value.replace(/[^a-zA-Z\s]/g, '');
             setFullName(value);
           }}
           required
@@ -82,7 +78,7 @@ function Register() {
           margin="normal"
           value={idNumber}
           onChange={(e) => {
-            const value = e.target.value.replace(/\D/g, ''); // Allow only digits
+            const value = e.target.value.replace(/\D/g, '');
             setIdNumber(value);
           }}
           required
@@ -94,7 +90,7 @@ function Register() {
           margin="normal"
           value={accountNumber}
           onChange={(e) => {
-            const value = e.target.value.replace(/\D/g, ''); // Allow only digits
+            const value = e.target.value.replace(/\D/g, '');
             setAccountNumber(value);
           }}
           required
@@ -109,6 +105,20 @@ function Register() {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
+        
+        {/* Role Dropdown */}
+        <FormControl fullWidth margin="normal">
+          <InputLabel>Role</InputLabel>
+          <Select
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
+            required
+          >
+            <MenuItem value="customer">Customer</MenuItem>
+            <MenuItem value="employee">Employee</MenuItem>
+          </Select>
+        </FormControl>
+
         <Button variant="contained" color="primary" fullWidth type="submit" style={{ marginTop: '20px' }}>Register</Button>
         <Typography variant="body2" align="center" style={{ marginTop: '20px' }}>
           Already have an account? <Button onClick={() => navigate('/login')} color="primary">Log in</Button>
@@ -119,4 +129,3 @@ function Register() {
 }
 
 export default Register;
-

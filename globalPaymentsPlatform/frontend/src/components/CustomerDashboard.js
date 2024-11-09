@@ -13,20 +13,28 @@ import {
   Snackbar,
   CircularProgress,
   Box,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   Fab
 } from '@mui/material';
 import MuiAlert from '@mui/lab/Alert';
+import AddIcon from '@mui/icons-material/Add';
 import LogoutIcon from '@mui/icons-material/Logout';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
-function EmployeeDashboard() {
+function CustomerDashboard() {
   const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState('');
   const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedPaymentId, setSelectedPaymentId] = useState(null);
   const navigate = useNavigate();
 
   // Fetch all pending payments on component load
@@ -35,13 +43,21 @@ function EmployeeDashboard() {
       setLoading(true);
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.get('https://localhost:5000/api/payment/', {
+        const userId = localStorage.getItem('userId'); // Assuming userId is stored on login
+        console.log("Token:", token);
+        console.log("UserId:", userId); // Log the userId to check it
+  
+        const response = await axios.get(`https://localhost:5000/api/payment/${userId}`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
         });
-        console.log("API response:", response.data);
-        setPayments(Array.isArray(response.data.transactions) ? response.data.transactions : []);
+  
+        console.log("Response data:", response.data); // Log the full response
+  
+        // Check if the userId from the response matches the localStorage userId
+        const transactions = Array.isArray(response.data.transactions) ? response.data.transactions : [response.data.transactions];
+        setPayments(transactions.filter(payment => payment.userId === userId));
       } catch (error) {
         console.error("Error fetching payments:", error);
         setPayments([]);
@@ -51,60 +67,59 @@ function EmployeeDashboard() {
     };
     fetchPayments();
   }, []);
-
-  const handleVerify = async (paymentId) => {
+   
+  const handleDelete = async () => {
     try {
-      await axios.put(`https://localhost:5000/api/payment/verify/${paymentId}`);
-      
-      setPayments(prevPayments => 
-        prevPayments.map(payment =>
-          payment._id === paymentId ? { ...payment, status: 'verified' } : payment
-        )
-      );
-      
-      setMessage("Payment verified successfully!");
+      await axios.delete(`https://localhost:5000/api/payment/${selectedPaymentId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+
+      setPayments(prevPayments => prevPayments.filter(payment => payment._id !== selectedPaymentId));
+      setMessage("Payment deleted successfully!");
       setOpenSnackbar(true);
     } catch (error) {
-      console.error("Error verifying payment:", error);
-      setMessage("Failed to verify payment.");
+      console.error("Error deleting payment:", error);
+      setMessage("Failed to delete payment.");
       setOpenSnackbar(true);
+    } finally {
+      setOpenDialog(false);
+      setSelectedPaymentId(null);
     }
   };
 
-  const handleRevert = async (paymentId) => {
-    try {
-      await axios.put(`https://localhost:5000/api/payment/revert/${paymentId}`);
-      
-      setPayments(prevPayments => 
-        prevPayments.map(payment =>
-          payment._id === paymentId ? { ...payment, status: 'pending' } : payment
-        )
-      );
-      
-      setMessage("Payment reverted to pending!");
-      setOpenSnackbar(true);
-    } catch (error) {
-      console.error("Error reverting payment to pending:", error);
-      setMessage("Failed to revert payment to pending.");
-      setOpenSnackbar(true);
-    }
+  const openDeleteDialog = (paymentId) => {
+    setSelectedPaymentId(paymentId);
+    setOpenDialog(true);
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('userId');
-    localStorage.removeItem('role'); // Clear role
-    setMessage('You have been logged out successfully!');
-    setOpenSnackbar(true);
-
-    // Redirect to the home page after showing the message
-    setTimeout(() => {
-      navigate('/');
-    }, 1500); // Wait for 2 seconds before redirecting
+  const closeDeleteDialog = () => {
+    setOpenDialog(false);
+    setSelectedPaymentId(null);
   };
 
   const handleCloseSnackbar = () => {
     setOpenSnackbar(false);
+  };
+
+  const handleAddPayment = () => {
+    navigate('/payment-info');
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('userId'); // Clear the user ID
+    localStorage.removeItem('role'); // Clear role
+
+    setMessage('You have been logged out successfully!');
+    setOpenSnackbar(true);
+
+    // Redirect to the login page after showing the message
+    setTimeout(() => {
+      setPayments([]); // Clear the payments on logout
+      navigate('/');
+    }, 1500); // Wait for 2 seconds before redirecting
   };
 
   return (
@@ -122,15 +137,31 @@ function EmployeeDashboard() {
     },
   }}
 >
-  {/* Logout Floating Button */}
-  <Box position="absolute" top={16} right={16} sx={{ '@media (max-width:600px)': { top: '10px', right: '10px' } }}>
+  {/* Floating Buttons */}
+  <Box
+    position="absolute"
+    top={16}
+    right={16}
+    display="flex"
+    gap={2}
+    sx={{
+      '@media (max-width:600px)': {
+        top: '10px',
+        right: '10px',
+      },
+    }}
+  >
+    <Fab color="primary" aria-label="add" onClick={handleAddPayment}>
+      <AddIcon />
+    </Fab>
     <Fab color="secondary" aria-label="logout" onClick={handleLogout}>
       <LogoutIcon />
     </Fab>
   </Box>
 
+  {/* Dashboard Title */}
   <Typography variant="h4" align="center" gutterBottom>
-    Employee Dashboard
+    Customer Dashboard
   </Typography>
 
   {/* Table (make it scrollable on small screens) */}
@@ -149,20 +180,18 @@ function EmployeeDashboard() {
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>Payment Made By</TableCell>
             <TableCell>Amount</TableCell>
             <TableCell>Currency</TableCell>
             <TableCell>Bank Name</TableCell>
             <TableCell>SWIFT Code</TableCell>
             <TableCell>Recipient</TableCell>
             <TableCell>Account Number</TableCell>
-            <TableCell>Status</TableCell>
+            <TableCell>Actions</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {payments.map((payment) => (
             <TableRow key={payment._id}>
-              <TableCell>{payment.userId ? payment.userId.fullName : 'N/A'}</TableCell>
               <TableCell>{payment.amount}</TableCell>
               <TableCell>{payment.currency}</TableCell>
               <TableCell>{payment.bankName}</TableCell>
@@ -170,15 +199,9 @@ function EmployeeDashboard() {
               <TableCell>{payment.recipientName}</TableCell>
               <TableCell>{payment.accountNumber}</TableCell>
               <TableCell>
-                {payment.status === 'verified' ? (
-                  <Button variant="contained" style={{ backgroundColor: '#888', color: 'white' }} onClick={() => handleRevert(payment._id)}>
-                    Revert
-                  </Button>
-                ) : (
-                  <Button variant="contained" color="primary" onClick={() => handleVerify(payment._id)}>
-                    Verify
-                  </Button>
-                )}
+                <Button variant="contained" color="error" onClick={() => openDeleteDialog(payment._id)}>
+                  Delete
+                </Button>
               </TableCell>
             </TableRow>
           ))}
@@ -186,7 +209,27 @@ function EmployeeDashboard() {
       </Table>
     )}
   </Box>
-  
+      {/* Delete Confirmation Dialog */}
+      <Dialog
+        open={openDialog}
+        onClose={closeDeleteDialog}
+      >
+        <DialogTitle>Confirm Deletion</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to delete this payment? This action cannot be undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={closeDeleteDialog} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleDelete} color="error">
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+
       <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={handleCloseSnackbar}>
         <Alert onClose={handleCloseSnackbar} severity="info">
           {message}
@@ -196,4 +239,4 @@ function EmployeeDashboard() {
   );
 }
 
-export default EmployeeDashboard;
+export default CustomerDashboard;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import Login from './components/Login';
 import Register from './components/Register';
@@ -7,6 +7,7 @@ import Home from './components/Home'; // Add this line to import Home
 import PaymentInfo from './components/PaymentInfo'; // Import PaymentInfo component
 import PaymentDetails from './components/PaymentDetails'; // Import PaymentDetails component
 import EmployeeDashboard from './components/EmployeeDashboard'; // Import EmployeeDashboard component
+import CustomerDashboard from './components/CustomerDashboard';
 
 
 // Define a custom theme with shades of green and black
@@ -24,6 +25,28 @@ const theme = createTheme({
   },
 });
 
+// Helper function to check if the user is logged in and has the correct role
+const isAuthenticated = () => {
+  const token = localStorage.getItem('token');
+  const userRole = localStorage.getItem('role');
+  return token && userRole === 'customer'; // Check if user is signed in and has 'customer' role
+};
+
+const isAuthenticatedEmployee = () => {
+  const token = localStorage.getItem('token');
+  const userRole = localStorage.getItem('role');
+  return token && userRole === 'employee'; // Check if user is signed in and has 'employee' role
+};
+
+// PrivateRoute component to protect specific routes
+const PrivateRoute = ({ element }) => {
+  return isAuthenticated() ? element : <Navigate to="/" />; // Redirect to home if not authenticated
+};
+
+const PrivateRouteEmployee = ({ element }) => {
+  return isAuthenticatedEmployee() ? element : <Navigate to="/" />; // Redirect to home if not authenticated
+};
+
 function App() {
   return (
     <ThemeProvider theme={theme}>
@@ -33,9 +56,14 @@ function App() {
             <Route path="/" element={<Home />} />  {/* Home Route */}
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/payment-info" element={<PaymentInfo />} /> {/* Payment Info Route */}
-            <Route path="/payment-details" element={<PaymentDetails />} /> {/* Payment Details Route */}
-            <Route path="/employee-dashboard" element={<EmployeeDashboard />} />
+
+            {/* Protect CustomerDashboard, PaymentInfo and PaymentDetails routes */}
+            <Route path="/customer-dashboard" element={<PrivateRoute element={<CustomerDashboard />} />}/>
+            <Route path="/payment-info" element={<PrivateRoute element={<PaymentInfo />} />} />
+            <Route path="/payment-details" element={<PrivateRoute element={<PaymentDetails />} />} />
+
+            {/* Protect EmployeeDashboard route */}
+            <Route path="/employee-dashboard" element={<PrivateRouteEmployee element={<EmployeeDashboard />} />}/>
           </Routes>
         </div>
       </Router>

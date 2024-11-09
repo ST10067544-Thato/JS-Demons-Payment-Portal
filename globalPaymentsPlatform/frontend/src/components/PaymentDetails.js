@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {
   TextField,
@@ -7,6 +7,10 @@ import {
   Container,
   Snackbar,
   CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle
 } from '@mui/material';
 import MuiAlert from '@mui/lab/Alert';
 import { useNavigate } from 'react-router-dom';
@@ -18,14 +22,27 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 function PaymentDetails() {
   const [bankName, setBankName] = useState('');
   const [swiftCode, setSwiftCode] = useState('');
-  const [reference, setReference] = useState(''); // Changed variable name
+  const [reference, setReference] = useState('');
   const [recipientName, setRecipientName] = useState('');
   const [accountNumber, setAccountNumber] = useState('');
   const [message, setMessage] = useState('');
-  const [open, setOpen] = useState(false);
   const [severity, setSeverity] = useState('success');
   const [loading, setLoading] = useState(false); // Loading state
+  const [openCancelDialog, setOpenCancelDialog] = useState(false); // Cancel Dialog state
+  const [cancelMessage, setCancelMessage] = useState(''); // Cancel message for Snackbar
+  const [openCancelSnackbar, setOpenCancelSnackbar] = useState(false); // Snackbar for cancel
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // Check if payment info exists in localStorage
+    const amount = localStorage.getItem('amount');
+    const currency = localStorage.getItem('currency');
+    
+    // If either of the required payment info is missing, redirect to PaymentInfo page
+    if (!amount || !currency) {
+      navigate('/payment-info');
+    }
+  }, [navigate]);
 
   const handlePayment = async (e) => {
     e.preventDefault();
@@ -36,11 +53,6 @@ function PaymentDetails() {
     const userId = localStorage.getItem('userId');
     const token = localStorage.getItem('token');
     try {
-      // Sends a POST request to the payment API with user details
-      // This router was adapted from geeskforgeeks
-      // https://www.geeksforgeeks.org/how-to-build-a-basic-crud-app-with-node-js-and-reactjs/
-      // braktim99
-      // https://www.geeksforgeeks.org/user/braktim99/contributions/?itm_source=geeksforgeeks&itm_medium=article_author&itm_campaign=auth_user
       await axios.post('https://localhost:5000/api/payment', {
         amount,
         currency,
@@ -53,44 +65,75 @@ function PaymentDetails() {
       }, {
         headers: {
           Authorization: `Bearer ${token}`
-        }});
+        }});      
       setLoading(false); // Stop loading
       setMessage('Payment processed successfully!');
       setSeverity('success');
-      setOpen(true);
+      setOpenCancelSnackbar(true); // Show success Snackbar
 
       // Clear local storage after successful payment
       localStorage.removeItem('amount');
       localStorage.removeItem('currency');
 
-      // Redirect to home after a delay
       setTimeout(() => {
-        navigate('/');
+        navigate('/customer-dashboard');
       }, 2000);
     } catch (err) {
       setLoading(false); // Stop loading
       setMessage('Payment failed. Please try again.');
       setSeverity('error');
-      setOpen(true);
+      setOpenCancelSnackbar(true); // Show error Snackbar
     }
   };
 
-  // Handle Snackbar close
   const handleClose = () => {
-    setOpen(false);
+    setOpenCancelSnackbar(false);
   };
 
-  // Validation regex patterns
-  const referencePattern = /^[a-zA-Z0-9]+$/; // Letters and numbers only
-  const accountNumberPattern = /^[0-9]+$/; // Numeric only
-  const swiftCodePattern = /^[a-zA-Z0-9]+$/; // Letters and numbers only
+  const handleCancel = () => {
+    setOpenCancelDialog(true); // Show confirmation dialog
+  };
+
+  const handleCancelConfirm = () => {
+    // Clear the relevant localStorage items
+    localStorage.removeItem('amount');
+    localStorage.removeItem('currency');
+  
+    // Set the cancel message and show the Snackbar
+    setCancelMessage('Transaction has been cancelled.');
+    setOpenCancelSnackbar(true);
+
+    // Close the dialog and navigate to the customer dashboard
+    setOpenCancelDialog(false);
+    setTimeout(() => {
+      navigate('/customer-dashboard');
+    }, 1000); // Add slight delay for Snackbar to show before redirecting
+  };
+  
+
+  const handleCancelDismiss = () => {
+    setOpenCancelDialog(false); // Close the cancel dialog without navigating
+  };
+
+  const referencePattern = /^[a-zA-Z0-9]+$/;
+  const accountNumberPattern = /^[0-9]+$/;
+  const swiftCodePattern = /^[a-zA-Z0-9]+$/;
 
   return (
     <Container maxWidth="sm" style={{ backgroundColor: '#f1f1f1', borderRadius: '10px', padding: '20px', boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)' }}>
       <Typography variant="h4" align="center" gutterBottom>Payment Details</Typography>
+      
+      {/* Snackbar for payment success or failure */}
       {message && <Snackbar open={Boolean(message)} autoHideDuration={6000} onClose={handleClose} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
         <Alert onClose={handleClose} severity={severity}>
           {message}
+        </Alert>
+      </Snackbar>}
+
+      {/* Snackbar for payment cancellation */}
+      {cancelMessage && <Snackbar open={openCancelSnackbar} autoHideDuration={6000} onClose={handleClose} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
+        <Alert onClose={handleClose} severity="info">
+          {cancelMessage}
         </Alert>
       </Snackbar>}
       
@@ -113,7 +156,7 @@ function PaymentDetails() {
           value={swiftCode}
           onChange={(e) => {
             const value = e.target.value;
-            if (swiftCodePattern.test(value) || value === '') { // Validate SWIFT code
+            if (swiftCodePattern.test(value) || value === '') {
               setSwiftCode(value);
             }
           }}
@@ -121,14 +164,14 @@ function PaymentDetails() {
         />
 
         <TextField
-          label="Reference" // Changed to "Reference"
+          label="Reference"
           variant="outlined"
           fullWidth
           margin="normal"
           value={reference}
           onChange={(e) => {
             const value = e.target.value;
-            if (referencePattern.test(value) || value === '') { // Validate reference
+            if (referencePattern.test(value) || value === '') {
               setReference(value);
             }
           }}
@@ -146,14 +189,14 @@ function PaymentDetails() {
         />
 
         <TextField
-          label="Account Number" // Account Number with validation
+          label="Account Number"
           variant="outlined"
           fullWidth
           margin="normal"
           value={accountNumber}
           onChange={(e) => {
             const value = e.target.value;
-            if (accountNumberPattern.test(value) || value === '') { // Validate account number
+            if (accountNumberPattern.test(value) || value === '') {
               setAccountNumber(value);
             }
           }}
@@ -166,11 +209,34 @@ function PaymentDetails() {
           fullWidth 
           type="submit" 
           style={{ marginTop: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-          disabled={loading} // Disable the button while loading
+          disabled={loading} 
         >
-          {loading ? <CircularProgress size={24} style={{ color: 'white', marginRight: '10px' }} /> : 'Pay Now'} {/* Show loader or button text */}
+          {loading ? <CircularProgress size={24} style={{ color: 'white', marginRight: '10px' }} /> : 'Pay Now'}
+        </Button>
+
+        {/* Cancel Payment Button */}
+        <Button 
+          variant="contained" 
+          color="secondary" 
+          fullWidth
+          style={{ marginTop: '10px', backgroundColor: 'gray' }} 
+          onClick={handleCancel}
+        >
+          Cancel Payment
         </Button>
       </form>
+
+      {/* Cancel Confirmation Dialog */}
+      <Dialog open={openCancelDialog} onClose={handleCancelDismiss}>
+        <DialogTitle>Confirm Cancellation</DialogTitle>
+        <DialogContent>
+          <Typography>Are you sure you want to cancel the payment? This will discard all entered details.</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCancelDismiss} color="primary">No</Button>
+          <Button onClick={handleCancelConfirm} color="secondary">Yes, Cancel</Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 }
