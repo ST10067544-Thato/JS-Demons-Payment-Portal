@@ -1,0 +1,36 @@
+version: 2.1
+jobs:
+  test:
+    docker:
+      - image: circleci/node:14
+    steps:
+      - checkout  # Pulls the repository code
+      
+      - run:
+          name: Install Dependencies in Backend
+          command: cd globalPaymentsPlatform/backend && npm install  # Navigate to backend and install dependencies
+      
+      - run:
+          name: Run Tests
+          command: echo \"No test specified in package.json\"  # Navigate to backend and run tests
+
+  build:
+    docker:
+      - image: circleci/node:14
+    steps:
+      - checkout  # Pulls the repository code
+      - run:
+          name: Install Dependencies
+          command: cd globalPaymentsPlatform/backend && npm install  # Install dependencies in backend
+      - run:
+          name: Build Project
+          command: cd globalPaymentsPlatform/backend && npm run build  # Build the project
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - test
+      - build:
+          requires:
+            - test  # Ensure that the build job runs after the test job
