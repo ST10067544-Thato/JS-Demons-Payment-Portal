@@ -27,12 +27,12 @@ const isAuthenticated = (role) => {
 
 // Role-specific route protection for customer
 const PrivateRoute = ({ element }) => (
-  isAuthenticated('customer') ? element : <Navigate to="/" />
+  isAuthenticated('customer') ? element : <Navigate to="/login" />
 );
 
 // Role-specific route protection for employee
 const PrivateRouteEmployee = ({ element }) => (
-  isAuthenticated('employee') ? element : <Navigate to="/" />
+  isAuthenticated('employee') ? element : <Navigate to="/login" />
 );
 
 function App() {
