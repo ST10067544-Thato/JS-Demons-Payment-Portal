@@ -141,20 +141,9 @@ We used a different repo due to issues with the Github Classroom Repo visibility
 
 ### CirclCI Test Screenshots
 
-![image](https://github.com/user-attachments/assets/bba9c488-7880-4a22-95e0-c13b45aa3736)
-
-![image](https://github.com/user-attachments/assets/2501b697-848e-423c-bf24-6d35604bf242)
-
-![image](https://github.com/user-attachments/assets/b4d38678-b52b-41df-b8ea-3e08442d759b)
-
-![image](https://github.com/user-attachments/assets/c262b453-9306-4456-b664-fc8b7cfb8963)
 
 
 ### Sonarqube (sonarcloud) Test Screenshots
 
-![image](https://github.com/user-attachments/assets/ef2165a0-76e5-478b-b3bb-ec2317c839c9)
 
-![image](https://github.com/user-attachments/assets/6dde9cbd-107e-4cc2-8a07-5d8214490788)
-
-![image](https://github.com/user-attachments/assets/be7cf33d-015a-43d0-a0cd-e4a5814b4881)
 
