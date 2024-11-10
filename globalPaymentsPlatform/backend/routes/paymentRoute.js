@@ -1,29 +1,28 @@
-const router = require('express').Router()
-const Payment = require('../models/Payment')
-const User = require('../models/User'); // Make sure User model is correctly imported
-const authMiddleware = require('../middleware/authMiddleware')
-const { ObjectId } = require('mongodb');  // Make sure you import ObjectId
+// Import necessary modules
+const router = require('express').Router();
+const Payment = require('../models/Payment');
+const User = require('../models/User');
+const authMiddleware = require('../middleware/authMiddleware');
+const { ObjectId } = require('mongodb'); 
 
-// Payment POST Route
+// Payment POST Route - for processing a new payment
+// This route was adapted from GeeksforGeeks:
+// https://www.geeksforgeeks.org/how-to-build-a-basic-crud-app-with-node-js-and-reactjs/
+// Author: braktim99
+// https://www.geeksforgeeks.org/user/braktim99/contributions/
 router.post('/', authMiddleware, async (req, res) => {
-    // This router was adapted from geeskforgeeks
-    // https://www.geeksforgeeks.org/how-to-build-a-basic-crud-app-with-node-js-and-reactjs/
-    // braktim99
-    // https://www.geeksforgeeks.org/user/braktim99/contributions/?itm_source=geeksforgeeks&itm_medium=article_author&itm_campaign=auth_user
     try {
+        // Destructure fields from the request body
         const { 
             amount, currency, 
             bankName, swiftCode, 
             method, userId, 
-            reference,
-            recipientName,
+            reference, recipientName,
             accountNumber 
         } = req.body;
-        
-        console.log(`amount: ${amount}, currency: 
-            ${currency}, bankName: ${bankName}, 
-            swiftCode: ${swiftCode}`)
-        
+
+        console.log(`amount: ${amount}, currency: ${currency}, bankName: ${bankName}, swiftCode: ${swiftCode}`);
+
         // Define allowed currencies for validation
         const allowedCurrencies = [
             'USD', 'EUR', 'GBP', 'JPY', 'AUD', 
@@ -33,9 +32,8 @@ router.post('/', authMiddleware, async (req, res) => {
         ];
 
         // Basic validation to ensure all required fields are provided
-        if (!amount || !currency || !bankName || !swiftCode || !reference
-            || !recipientName
-            || !accountNumber ) {
+        if (!amount || !currency || !bankName || !swiftCode || !reference || 
+            !recipientName || !accountNumber) {
             return res.status(400).send('All fields are required');
         }
 
@@ -44,113 +42,122 @@ router.post('/', authMiddleware, async (req, res) => {
             return res.status(400).send('Invalid currency');
         }
 
-        // Store payment data 
+        // Store the payment data in a new Payment document
         const newPayment = new Payment({ 
             amount, currency, bankName, 
             method, swiftCode, userId, reference,
-            recipientName,
-            accountNumber  });
-        
-        await newPayment.validate(); // Validate the payment data
-        await newPayment.save();  // Save the validated payment to the database
+            recipientName, accountNumber  
+        });
+
+        // Validate and save the new payment document
+        await newPayment.validate();
+        await newPayment.save();
 
         // Respond with a success message
         res.status(201).send('Payment processed');
     } catch (error) {
-        // return a 500 status with an error message for a server error
-        console.error('server error', error)
+        // Handle any errors with a 500 status and error message
+        console.error('Server error', error);
         res.status(500).json({ message: 'Server error', error });
-
     }
 });
 
-// Payment GET Route [this is for the customer-dashboard page]
+// Payment GET Route - Retrieve payments for a specific user [for customer-dashboard page]
+// This route was adapted from GeeksforGeeks:
+// https://www.geeksforgeeks.org/how-to-build-a-basic-crud-app-with-node-js-and-reactjs/
+// Author: braktim99
+// https://www.geeksforgeeks.org/user/braktim99/contributions/
 router.get('/:userId', authMiddleware, async (req, res) => {
-    // This router was adapted from geeskforgeeks
-    // https://www.geeksforgeeks.org/how-to-build-a-basic-crud-app-with-node-js-and-reactjs/
-    // braktim99
-    // https://www.geeksforgeeks.org/user/braktim99/contributions/?itm_source=geeksforgeeks&itm_medium=article_author&itm_campaign=auth_user
-    const { userId } = req.params;  // Get the userId from the URL
-
+    const { userId } = req.params;  // Extract userId from URL parameters
+    
     try {
-        // Convert the userId to an ObjectId before querying the database
+        // Convert userId to an ObjectId to query the database
         const userObjectId = new ObjectId(userId);
 
-        // Fetch payments for the specific user
-        const payments = await Payment.find({ userId: userObjectId }); // Filter payments by userId (as ObjectId)
+        // Fetch payments associated with the specific userId
+        const payments = await Payment.find({ userId: userObjectId });
         
+        // Send the payments in the response
         res.status(200).json({
             message: "User transactions retrieved",
             transactions: payments
         });
     } catch (err) {
+        // Handle any errors with a 500 status and error message
         console.error('Error getting payments', err);
         res.status(500).json({ message: 'Server error', error: err });
     }
 });
 
-// Route to get all payments [this is for the employee-dashboard page]
+// Route to get all payments [for employee-dashboard page]
 router.get('/', async (req, res) => {
     try {
-        const payments = await Payment.find().populate('userId', 'fullName'); // Populate userId with fullName
+        // Fetch all payments and populate the 'userId' field with the 'fullName'
+        const payments = await Payment.find().populate('userId', 'fullName');
+        
+        // Respond with the payments
         res.json({
-            message: "user transactions retrieved",
+            message: "User transactions retrieved",
             transactions: payments
         });
     } catch (error) {
+        // Handle any errors with a 500 status and error message
         res.status(500).json({ message: 'Server error', error: error.message });
     }
 });
 
-// Server-side route to verify a payment
+// PUT Route to verify a payment
 router.put('/verify/:paymentId', async (req, res) => {
     const { paymentId } = req.params;
-  
+
     try {
-      const payment = await Payment.findById(paymentId);
-  
-      if (!payment) {
-        return res.status(404).json({ message: 'Payment not found' });
-      }
-  
-      // Update the payment status to 'verified'
-      payment.status = 'verified';
-      await payment.save();
-  
-      res.json({ message: 'Payment verified successfully' });
+        // Find the payment by ID
+        const payment = await Payment.findById(paymentId);
+
+        if (!payment) {
+            return res.status(404).json({ message: 'Payment not found' });
+        }
+
+        // Update the payment status to 'verified'
+        payment.status = 'verified';
+        await payment.save();
+
+        res.json({ message: 'Payment verified successfully' });
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Error verifying payment' });
+        console.error(error);
+        res.status(500).json({ message: 'Error verifying payment' });
     }
 });
 
-// Route to revert a payment status to 'pending'
+// PUT Route to revert a payment status to 'pending'
 router.put('/revert/:paymentId', async (req, res) => {
     const { paymentId } = req.params;
-  
-    try {
-      const payment = await Payment.findById(paymentId);
-  
-      if (!payment) {
-        return res.status(404).json({ message: 'Payment not found' });
-      }
-  
-      // Revert the payment status to 'pending'
-      payment.status = 'pending';
-      await payment.save();
-  
-      res.json({ message: 'Payment reverted to pending' });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Error reverting payment' });
-    }
-  });
 
-// Route to toggle the payment status [this is for the employee-dashboard page]
+    try {
+        // Find the payment by ID
+        const payment = await Payment.findById(paymentId);
+
+        if (!payment) {
+            return res.status(404).json({ message: 'Payment not found' });
+        }
+
+        // Revert the payment status to 'pending'
+        payment.status = 'pending';
+        await payment.save();
+
+        res.json({ message: 'Payment reverted to pending' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error reverting payment' });
+    }
+});
+
+// PUT Route to toggle the payment status [for employee-dashboard page]
 router.put('/toggle-status/:paymentId', async (req, res) => {
     const { paymentId } = req.params;
 
     try {
+        // Find the payment by ID
         const payment = await Payment.findById(paymentId);
 
         if (!payment) {
@@ -166,6 +173,26 @@ router.put('/toggle-status/:paymentId', async (req, res) => {
         console.error(error);
         res.status(500).json({ message: 'Error updating payment status' });
     }
-}) 
+});
 
-module.exports = router 
+// DELETE route to delete a payment by ID
+router.delete('/:paymentId', authMiddleware, async (req, res) => {
+    const { paymentId } = req.params;  // Extract paymentId from URL parameters
+    
+    try {
+        // Find and delete the payment by its ID
+        const payment = await Payment.findByIdAndDelete(paymentId);
+        
+        if (!payment) {
+            return res.status(404).json({ message: 'Payment not found' });
+        }
+
+        // Respond with a success message
+        res.json({ message: 'Payment deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting payment', error);
+        res.status(500).json({ message: 'Error deleting payment', error });
+    }
+});
+
+module.exports = router;
