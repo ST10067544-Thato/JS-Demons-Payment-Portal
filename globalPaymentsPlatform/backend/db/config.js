@@ -1,3 +1,7 @@
+// This file was adapted from geeksforgeeks
+// https://www.geeksforgeeks.org/how-to-use-mongodb-and-mongoose-with-node-js/
+// abdullahaz93z
+// https://www.geeksforgeeks.org/user/abdullahaz93z/contributions/?itm_source=geeksforgeeks&itm_medium=article_author&itm_campaign=auth_user
 const mongoose = require('mongoose');
 
 const connectDB = async () => {

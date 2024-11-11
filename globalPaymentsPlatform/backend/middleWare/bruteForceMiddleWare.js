@@ -29,15 +29,16 @@ const store = new MongooseStore(BruteForceModel);
 // Create an ExpressBrute instance to protect against brute force attacks, using the Mongoose store
 const bruteForce = new ExpressBrute(store, {
   freeRetries: 2,
-  minWait: 1 * 60 * 1000,
-  maxWait: 2 * 60 * 1000,
+  minWait: 1 * 60 * 1000, //5 minutes
+  maxWait: 2 * 60 * 1000, //1 hour
+  // Custom callback to handle failed login attempts once the rate limit is reached
   failCallback: function (req, res, next, nextValidRequestDate) {
     // Conditional response based on environment
     if (process.env.NODE_ENV === 'test') {
       // Return 400 for testing
       res.status(400).send('Rate limit exceeded (for testing)');
     } else {
-      // Return 429 for production
+      // Return a 429 status code (Too Many Requests) for production and inform the user
       res.status(429).json({
         message: 'Too many failed attempts. Please try again later.',
         nextValidRequestDate,
@@ -53,6 +54,6 @@ const applyBruteForce = (req, res, next) => {
     } else {
       next(); // Bypass rate limiting during tests
     }
-  };
+};
   
 module.exports = { prevent: applyBruteForce }; // Export the conditional function

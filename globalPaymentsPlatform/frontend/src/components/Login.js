@@ -24,6 +24,9 @@ function Login() {
     const role = localStorage.getItem('role');
     
     if (token) {
+      // This code was inspired by the following YouTube tutorial:
+      // User Role-Based Access Control & Permissions in React JS | MERN Stack
+      // https://www.youtube.com/watch?v=UhrmPH3TLus
       // Navigate based on user role
       navigate(role === 'employee' ? '/employee-dashboard' : '/customer-dashboard');
     }

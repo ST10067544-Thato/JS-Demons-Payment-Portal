@@ -19,6 +19,9 @@ const theme = createTheme({
   },
 });
 
+
+// This section of code was adapted from Medium.com
+// https://medium.com/@yogeshmulecraft/implementing-protected-routes-in-react-js-b39583be0740
 // Helper functions for role-based authentication
 const isAuthenticated = (role) => {
   const token = localStorage.getItem('token');
