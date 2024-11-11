@@ -119,7 +119,7 @@ This project utilizes CircleCI for continuous integration and SonarQube (SonarCl
 [![CircleCI](https://circleci.com/gh/ST10067544-Thato/JS-Demons-Payment-Portal.svg?style=svg)](https://circleci.com/gh/ST10067544-Thato/JS-Demons-Payment-Portal)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ST10067544-Thato_JS-Demons-Payment-Portal&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=ST10067544-Thato_JS-Demons-Payment-Portal)
 
-* **CircleCI:** Automates the build, test, and deployment process. [View CircleCI builds](link-to-your-circleci-builds)
-* **SonarQube:** Provides static code analysis to identify bugs, vulnerabilities, and code smells. [View SonarQube report](link-to-your-sonarqube-report)
+* **CircleCI:** Automates the build, test, and deployment process. View the CircleCI pipelines for this project [here](https://app.circleci.com/pipelines/github/ST10067544-Thato/JS-Demons-Payment-Portal)
+* **SonarQube:** Provides static code analysis to identify bugs, vulnerabilities, and code smells. View the SonarQube report for this project [here](https://sonarcloud.io/project/overview?id=ST10067544-Thato_JS-Demons-Payment-Portal)
 
 **Note:** A separate repo ([https://github.com/ST10067544-Thato/JS-Demons-Payment-Portal](https://github.com/ST10067544-Thato/JS-Demons-Payment-Portal.git)) was used for testing due to GitHub Classroom visibility settings.
