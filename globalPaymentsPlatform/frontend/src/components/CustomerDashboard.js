@@ -131,7 +131,7 @@ function CustomerDashboard() {
     localStorage.removeItem('userId'); // Clear user ID
     localStorage.removeItem('role'); // Clear role
 
-    setMessage('Logout successful! Redirecting to homepage...');
+    setMessage('You have been logged out successfully! Redirecting to homepage...');
     setOpenSnackbar(true);
 
     // Redirect to homepage after brief delay

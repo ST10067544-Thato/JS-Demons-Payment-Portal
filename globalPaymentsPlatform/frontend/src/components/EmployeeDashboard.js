@@ -102,7 +102,7 @@ function EmployeeDashboard() {
     localStorage.removeItem('userId');
     localStorage.removeItem('role');
     localStorage.removeItem('name');
-    setMessage('Logout successful! Redirecting to homepage...');
+    setMessage('You have been logged out successfully! Redirecting to homepage...');
     setOpenSnackbar(true);
 
     setTimeout(() => {

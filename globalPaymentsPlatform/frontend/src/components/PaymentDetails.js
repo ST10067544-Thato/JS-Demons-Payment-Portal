@@ -121,7 +121,7 @@ function PaymentDetails() {
 
   return (
     <Container maxWidth="sm" style={{ backgroundColor: '#f1f1f1', borderRadius: '10px', padding: '20px', boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)' }}>
-      <Typography variant="h4" align="center" gutterBottom>Payment Details</Typography>
+      <Typography variant="h4" align="center" gutterBottom>Confirm Payment Details</Typography>
       
       {/* Snackbar for payment success or failure */}
       {message && <Snackbar open={Boolean(message)} autoHideDuration={6000} onClose={handleClose} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>

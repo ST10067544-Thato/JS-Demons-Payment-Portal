@@ -13,8 +13,6 @@ const connectDB = async () => {
     // Attempt to connect to the MongoDB server using the provided URI and database name
     await mongoose.connect(ATLAS_URI, {
       dbName: MONGODB_DB, // Use the database name from the environment variable
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
     });
     console.log('mongoDB is CONNECTED!!! :)');
   } catch (err) {
