@@ -20,7 +20,9 @@ JS Demons Payments Portal empowers customers to securely log in, register, and m
 * **Real-time Processing:** Integrated system for secure payment data storage.
 * **Employee Dashboard:**  Admin panel for payment verification and management.
 
-**Note:** Other payment methods (Mastercard, PayPal, EFT) are currently unavailable, with SWIFT as the primary method.
+**Note:** Other payment methods (Mastercard, PayPal, EFT) are currently unavailable in this release, with SWIFT as the primary method.  
+
+**How to run:** You can follow the steps below or watch the video tutorial [HERE:](https://drive.google.com/drive/folders/1jDQK7Gx0coSoVBcpDMRGbLRVPnSbSX6U?usp=sharing)  
 
 ## 📸 Screenshots
 
@@ -32,22 +34,6 @@ JS Demons Payments Portal empowers customers to securely log in, register, and m
 | Payment Information | ![Payment Information](https://imgur.com/8i3yfYI.png) |
 | Payment Details | ![Payment Details](https://imgur.com/CSpvw0F.png) |
 | Employee Dashboard | ![Employee Dashboard](https://imgur.com/rh6GvYV.png) |
-
-## 🤔 How It Works
-
-Once the app is up and running, access it at http://localhost:3000/. Login using the preconfigured credentials provided in the [test.http](https://github.com/ST10067544-Thato/JS-Demons-Payment-Portal/blob/main/globalPaymentsPlatform/backend/test.http) file.
-
-### Customer Workflow
-
-* **Dashboard:** View and manage your payments.
-* **Add Payment:** Enter payment details, including amount, currency, and SWIFT information.
-* **Payment Confirmation:** Review and confirm your payment.
-
-### Employee Workflow
-
-* **Dashboard:** View all payments made by users.
-* **Verify Payments:** Confirm legitimate payments and mark them as "verified."
-* **Revert Payments:** Revert payments to "pending" status if needed.
 
 ## 🚀 Quick Start
 
@@ -68,9 +54,7 @@ cd ../backend && npm install
 ```
 
 3. **Run the App:**
-   
-   You can follow the steps below or watch the video tutorial [here:](https://drive.google.com/drive/folders/1jDQK7Gx0coSoVBcpDMRGbLRVPnSbSX6U?usp=sharing)
-   
+
    * **Frontend:**  
     ```bash
      cd globalPaymentsPlatform/frontend
@@ -83,6 +67,22 @@ cd ../backend && npm install
      npm run dev
      ```
      The backend API will run at http://localhost:5000/.  
+
+## 🤔 How It Works
+
+Once the app is up and running, access it at http://localhost:3000/. Login using the preconfigured credentials provided in the [test.http](https://github.com/ST10067544-Thato/JS-Demons-Payment-Portal/blob/main/globalPaymentsPlatform/backend/test.http) file.
+
+### Customer Workflow
+
+* **Dashboard:** View and manage your payments.
+* **Add Payment:** Enter payment details, including amount, currency, and SWIFT information.
+* **Payment Confirmation:** Review and confirm your payment.
+
+### Employee Workflow
+
+* **Dashboard:** View all payments made by users.
+* **Verify Payments:** Confirm legitimate payments and mark them as "verified."
+* **Revert Payments:** Revert payments to "pending" status if needed.
 
 ## 💻 Tech Stack
 
