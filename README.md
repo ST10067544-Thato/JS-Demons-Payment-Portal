@@ -3,49 +3,99 @@
 </p>
 <h1 align="center"> JS Demons Payments Portal </h1>
 
-JS Demons Payments Portal is a sleek and modern international payment system designed for banks. Customers can securely log in, register, and make international payments using the SWIFT method. This system ensures data security and integrity with robust encryption and validation.
+**A sleek and modern international payment system designed for banks.**
 
-## Members
-- **Malik Mannan** - ST10091422  
-- **Thato Sebelemetja** – ST10067544
+JS Demons Payments Portal empowers customers to securely log in, register, and make international payments using the SWIFT method. This system prioritizes data security and integrity with robust encryption and validation.
 
-## Features
-- **User Registration & Login:** Secure authentication system with username and password.
-- **International Payment Options:** SWIFT-based international payments with support for various currencies.
-- **Responsive Design:** Sleek and professional UI built using React and Material UI.
-- **Real-Time Payment Process:** Integrated real-time payment system that stores payment data securely.
-- **Disabled Payment Methods:** Other payment methods (Mastercard, PayPal, EFT) are visually disabled, leaving SWIFT as the primary method.
-  
+## 👥 Team
 
-## Screenshots
+* **Malik Mannan** - ST10091422
+* **Thato Sebelemetja** - ST10067544
 
-### Home Page
+## ✨ Features
 
-<p align="center">
-  <img src = "https://imgur.com/r5SPBCg.png" width=700>
-</p>
+* **Secure Authentication:** User registration and login with robust password hashing.
+* **International Payments:** SWIFT-based payments with support for various currencies.
+* **Responsive UI:** Sleek and professional design built with React and Material UI.
+* **Real-time Processing:** Integrated system for secure payment data storage.
+* **Employee Dashboard:**  Admin panel for payment verification and management.
 
-### Payment Information/Method Page
+**Note:** Other payment methods (Mastercard, PayPal, EFT) are currently unavailable, with SWIFT as the primary method.
 
-<p align="center">
-  <img src = "https://imgur.com/aum2Nuy.png" width=700>
-</p>
+## 📸 Screenshots
 
-### Payment Details
+| Feature | Screenshot |
+|---|---|
+| Home Page | ![Home Page](https://imgur.com/DP0CPgh.png) |
+| Login Page | ![Login Page](https://imgur.com/gtKsIJ3.png) |
+| Customer Dashboard | ![Customer Dashboard](https://imgur.com/cA3np5S.png) |
+| Payment Information | ![Payment Information](https://imgur.com/8i3yfYI.png) |
+| Payment Details | ![Payment Details](https://imgur.com/CSpvw0F.png) |
+| Employee Dashboard | ![Employee Dashboard](https://imgur.com/rh6GvYV.png) |
 
-<p align="center">
-  <img src = "https://imgur.com/Z397Nlg.png" width=700>
-</p>
+## 🤔 How It Works
 
+Once the app is up and running, access it at http://localhost:3000/. Login using the preconfigured credentials provided in the [test.http](https://github.com/ST10067544-Thato/JS-Demons-Payment-Portal/blob/main/globalPaymentsPlatform/backend/test.http) file.
 
-## Tech Stack
+### Customer Workflow
 
-- **Frontend**: React.js, Material UI
-- **Backend**: Node.js, Express
-- **Validation**: Regex-based form validation
-- **Security**: bcrypt for password hashing, JWT for authentication
+* **Dashboard:** View and manage your payments.
+* **Add Payment:** Enter payment details, including amount, currency, and SWIFT information.
+* **Payment Confirmation:** Review and confirm your payment.
 
-## Project Structure
+### Employee Workflow
+
+* **Dashboard:** View all payments made by users.
+* **Verify Payments:** Confirm legitimate payments and mark them as "verified."
+* **Revert Payments:** Revert payments to "pending" status if needed.
+
+## 🚀 Quick Start
+
+1. **Clone the Repository:**
+
+```bash
+git clone https://github.com/IIEWFL/apds7311-part-2-js-demons.git
+cd globalPaymentsPlatform
+```
+
+2. **Install Dependencies:**
+
+Navigate to the frontend folder and install the dependencies:
+
+```bash
+cd frontend && npm install
+cd ../backend && npm install
+```
+
+3. **Run the App:**
+   
+   You can follow the steps below or watch the video tutorial [here:](https://drive.google.com/drive/folders/1jDQK7Gx0coSoVBcpDMRGbLRVPnSbSX6U?usp=sharing)
+   
+   * **Frontend:**  
+    ```bash
+     cd globalPaymentsPlatform/frontend
+     npm start
+     ```
+     The React app will now run at http://localhost:3000/.  
+   * **Backend:**  
+    ```bash
+     cd ../backend
+     npm run dev
+     ```
+     The backend API will run at http://localhost:5000/.  
+
+## 💻 Tech Stack
+
+[![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
+[![Material UI](https://img.shields.io/badge/Material%20UI-0081CB?style=for-the-badge&logo=material-ui&logoColor=white)](https://mui.com/)
+[![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)](https://nodejs.org/en)
+[![Express.js](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white)](https://expressjs.com/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-4EA9B0?style=for-the-badge&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
+
+* **Validation:** Regex
+* **Security:** bcrypt, JWT, Nodemon (for development)
+
+## 📂 Project Structure
 ```bash
 ├── globalPaymentsPlatform
 │   ├── backend               # Node.js/Express backend
@@ -60,101 +110,16 @@ JS Demons Payments Portal is a sleek and modern international payment system des
 └── README.md                 # Project documentation
 ```
 
-## Prerequisites
+## 🧪 Testing
 
-Before you begin, ensure you have the following installed:
+### Continuous Integration and Code Quality
 
-- [Node.js](https://nodejs.org/) (v14 or above)
-- npm (comes with Node.js)
-- [Git](https://git-scm.com/)
+This project utilizes CircleCI for continuous integration and SonarQube (SonarCloud) for code quality analysis.
 
+[![CircleCI](https://circleci.com/gh/ST10067544-Thato/JS-Demons-Payment-Portal.svg?style=svg)](https://circleci.com/gh/ST10067544-Thato/JS-Demons-Payment-Portal)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ST10067544-Thato_JS-Demons-Payment-Portal&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=ST10067544-Thato_JS-Demons-Payment-Portal)
 
-## Installation
+* **CircleCI:** Automates the build, test, and deployment process. [View CircleCI builds](link-to-your-circleci-builds)
+* **SonarQube:** Provides static code analysis to identify bugs, vulnerabilities, and code smells. [View SonarQube report](link-to-your-sonarqube-report)
 
-Follow these steps to get the app up and running locally:
-
-### 1. Clone the Repository
-
-```bash
-git clone https://github.com/IIEWFL/apds7311-part-2-js-demons.git
-cd globalPaymentsPlatform
-```
-
-### 2. Frontend Setup (React)
-
-Navigate to the frontend folder and install the dependencies:
-
-```bash
-cd globalPaymentsPlatform/frontend
-npm install
-```
-
-### 3. Backend Setup (Node.js/Express)
-
-Navigate to the backend folder and install the dependencies:
-
-```bash
-cd ../backend
-npm install
-```
-
-### 5. Running the App
-
-Follow these steps below to get the app up and running or watch the video here:
-
-https://drive.google.com/drive/folders/1jDQK7Gx0coSoVBcpDMRGbLRVPnSbSX6U?usp=sharing
-
-#### Start the Frontend (React)
-In the globalPaymentsPlatform directory, start the frontend:
-
-```bash
-cd globalPaymentsPlatform/frontend
-npm start
-```
-
-The React app will now run at http://localhost:3000/.
-
-#### Start the Backend (Node.js/Express)
-In the globalPaymentsPlatform directory, start the backend:
-
-```bash
-cd ../backend
-npm start
-```
-
-The backend API will run at http://localhost:5000/.
-
-## Usage
-Once the app is up and running:
-1. Open your browser and navigate to http://localhost:3000/.
-2. Register a new account using your full name, username, ID number, and account number.
-3. Login using your credentials.
-4. Proceed to Payment and fill in the required fields, choose your currency, and select the SWIFT payment method.
-5. Review the transaction on the Payment Details page and confirm the payment.
-
-## CIRCLECI AND SONQUBE TESTS 
-
-### Repo Used to Run CircleCI & SonarQube Tests
-https://github.com/st10091422/APDS7311-PART2.git
-
-We used a different repo due to issues with the Github Classroom Repo visibility settings.
-
-### CirclCI Test Screenshots
-![Screenshot 2024-11-11 020426](https://github.com/user-attachments/assets/af072c86-203f-4951-a0bf-a20081ba091b)
-
-![Screenshot 2024-11-11 020109](https://github.com/user-attachments/assets/5d47aada-8740-429c-948d-b99e24d9ef7b)
-
-![Screenshot 2024-11-11 020546](https://github.com/user-attachments/assets/ccd18751-3437-4e4b-9931-3d4c2cb6ecfa)
-
-![Screenshot 2024-11-11 020515](https://github.com/user-attachments/assets/015a2754-7529-45b6-aa67-274e7ccabd40)
-
-
-### Sonarqube (sonarcloud) Test Screenshots
-
-![Screenshot 2024-11-11 020904](https://github.com/user-attachments/assets/4b12f918-6004-4410-9b3d-85f5b65a760f)
-
-![Screenshot 2024-11-11 021018](https://github.com/user-attachments/assets/96c712ab-0d4f-4def-b272-b0b7b6978913)
-
-![Screenshot 2024-11-11 020929](https://github.com/user-attachments/assets/0a430d66-1927-4e72-b6f1-9b530a70d839)
-
-
+**Note:** A separate repo ([https://github.com/ST10067544-Thato/JS-Demons-Payment-Portal](https://github.com/ST10067544-Thato/JS-Demons-Payment-Portal.git)) was used for testing due to GitHub Classroom visibility settings.
