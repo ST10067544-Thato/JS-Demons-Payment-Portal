@@ -2,7 +2,7 @@
 const router = require('express').Router();
 const Payment = require('../models/Payment');
 const User = require('../models/User');
-const authMiddleware = require('../middleware/authMiddleware');
+const authMiddleware = require('../middleWare/authMiddleware');
 const { ObjectId } = require('mongodb'); 
 
 // Payment POST Route - for processing a new payment
