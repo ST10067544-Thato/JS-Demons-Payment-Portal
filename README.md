@@ -140,10 +140,21 @@ https://github.com/st10091422/APDS7311-PART2.git
 We used a different repo due to issues with the Github Classroom Repo visibility settings.
 
 ### CirclCI Test Screenshots
+![Screenshot 2024-11-11 020426](https://github.com/user-attachments/assets/af072c86-203f-4951-a0bf-a20081ba091b)
 
+![Screenshot 2024-11-11 020109](https://github.com/user-attachments/assets/5d47aada-8740-429c-948d-b99e24d9ef7b)
+
+![Screenshot 2024-11-11 020546](https://github.com/user-attachments/assets/ccd18751-3437-4e4b-9931-3d4c2cb6ecfa)
+
+![Screenshot 2024-11-11 020515](https://github.com/user-attachments/assets/015a2754-7529-45b6-aa67-274e7ccabd40)
 
 
 ### Sonarqube (sonarcloud) Test Screenshots
 
+![Screenshot 2024-11-11 020904](https://github.com/user-attachments/assets/4b12f918-6004-4410-9b3d-85f5b65a760f)
+
+![Screenshot 2024-11-11 021018](https://github.com/user-attachments/assets/96c712ab-0d4f-4def-b272-b0b7b6978913)
+
+![Screenshot 2024-11-11 020929](https://github.com/user-attachments/assets/0a430d66-1927-4e72-b6f1-9b530a70d839)
 
 
