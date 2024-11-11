@@ -2,7 +2,7 @@
 const router = require('express').Router();
 const Payment = require('../models/Payment');
 const User = require('../models/User');
-const authMiddleware = require('../middleware/authMiddleware');
+const authMiddleware = require('../middleWare/authMiddleware');
 const { ObjectId } = require('mongodb'); 
 
 // Payment POST Route - for processing a new payment
@@ -151,6 +151,14 @@ router.put('/revert/:paymentId', async (req, res) => {
         res.status(500).json({ message: 'Error reverting payment' });
     }
 });
+
+// This code below was adapted from Medium.com:
+// Fetch API Data on Button Click in React.
+// https://medium.com/@wanguiwawerub/fetch-api-data-on-button-click-in-react-d87730224159
+// and 
+// Also inspired by this YouTube video:
+// React JS – Fetch Data from any API – Button Click / Component Mount
+// https://www.youtube.com/watch?v=4bgL-4v3quk
 
 // PUT Route to toggle the payment status [for employee-dashboard page]
 router.put('/toggle-status/:paymentId', async (req, res) => {

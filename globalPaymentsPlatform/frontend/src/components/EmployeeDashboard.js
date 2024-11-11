@@ -58,6 +58,13 @@ function EmployeeDashboard() {
     fetchPayments();
   }, []);
 
+  // This code below was adapted from Medium.com:
+  // Fetch API Data on Button Click in React.
+  // https://medium.com/@wanguiwawerub/fetch-api-data-on-button-click-in-react-d87730224159
+  // and 
+  // Also inspired by this YouTube video:
+  // React JS – Fetch Data from any API – Button Click / Component Mount
+  // https://www.youtube.com/watch?v=4bgL-4v3quk
   const handleVerify = async (paymentId) => {
     try {
       await axios.put(`https://localhost:5000/api/payment/verify/${paymentId}`);
@@ -95,7 +102,7 @@ function EmployeeDashboard() {
     localStorage.removeItem('userId');
     localStorage.removeItem('role');
     localStorage.removeItem('name');
-    setMessage('Logout successful! Redirecting to homepage...');
+    setMessage('You have been logged out successfully! Redirecting to homepage...');
     setOpenSnackbar(true);
 
     setTimeout(() => {

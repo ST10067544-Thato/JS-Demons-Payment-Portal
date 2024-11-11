@@ -62,6 +62,9 @@ function CustomerDashboard() {
           }
         });
 
+        // This code was inspired by the following YouTube tutorial:
+        // User Role-Based Access Control & Permissions in React JS | MERN Stack
+        // https://www.youtube.com/watch?v=UhrmPH3TLus
         // Filter payments to only include those for the current user
         const transactions = Array.isArray(response.data.transactions) ? response.data.transactions : [response.data.transactions];
         setPayments(transactions.filter(payment => payment.userId === userId));
@@ -99,6 +102,8 @@ function CustomerDashboard() {
   };
 
   // Open delete confirmation dialog
+  // This section of code was adapted from dev.to
+  // https://dev.to/akshaysrepo/building-a-confirmation-dialog-component-with-react-and-material-ui-4468
   const openDeleteDialog = (paymentId) => {
     setSelectedPaymentId(paymentId);
     setOpenDialog(true);
@@ -126,7 +131,7 @@ function CustomerDashboard() {
     localStorage.removeItem('userId'); // Clear user ID
     localStorage.removeItem('role'); // Clear role
 
-    setMessage('Logout successful! Redirecting to homepage...');
+    setMessage('You have been logged out successfully! Redirecting to homepage...');
     setOpenSnackbar(true);
 
     // Redirect to homepage after brief delay
