@@ -1,73 +1,45 @@
-# Specify CircleCI version
 version: 2.1
 
-# Define jobs
 jobs:
-  # Job for running tests
   test:
-    # Specify Docker image for the job
     docker:
-      - image: cimg/node:16.20.1 # Use Node.js 16.20.1 image
-
-    # Define steps for the job
+      - image: cimg/node:18.20.0 # Updated image
     steps:
-      # Checkout code from repository
       - checkout
-
-      # Restore dependencies from cache if available
       - restore_cache:
           keys:
-            # Cache key based on package-lock.json checksum
             - v1-dependencies-{{ checksum "globalPaymentsPlatform/backend/package-lock.json" }}
-            # Fallback cache key
             - v1-dependencies-
-
-      # Install project dependencies
       - run:
           name: Install Dependencies in Backend
           command: cd globalPaymentsPlatform/backend && npm install
-
-      # Update specific deprecated packages
       - run:
           name: Update Deprecated Packages
           command: |
             cd globalPaymentsPlatform/backend
             npm update inflight glob
-
-      # Connect to MongoDB Atlas (replace 'test' with 'test-ci' in URI)
       - run:
           name: Connect to MongoDB Atlas
           command: |
             cd globalPaymentsPlatform/backend
             MONGO_URI=$(echo $MONGODB_URI | sed 's/test/test-ci/')
             export MONGO_URI
-
-      # Seed test data if needed
       - run:
           name: Seed Test Data (if needed)
           command: |
             cd globalPaymentsPlatform/backend
             node seed-data.js
-
-      # Save dependencies to cache
       - save_cache:
           paths:
             - globalPaymentsPlatform/backend/node_modules
           key: v1-dependencies-{{ checksum "globalPaymentsPlatform/backend/package-lock.json" }}
-
-      # Run tests using Jest with detectOpenHandles flag
       - run:
           name: Run Tests
           command: |
             cd globalPaymentsPlatform/backend
-            npm test -- --detectOpenHandles # Added --detectOpenHandles
+            npm test -- --detectOpenHandles
 
-# Define workflows
 workflows:
-  # Workflow version
-  version: 2
-  # Workflow for running tests
   test:
-    # Jobs to run in the workflow
     jobs:
       - test
