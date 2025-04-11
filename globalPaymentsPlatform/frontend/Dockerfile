@@ -1,46 +1,22 @@
-# Stage 1: Build the React app
+# Use the official Node.js image as a base
 FROM node:16 AS build
 
-# Set working directory
+# Set the working directory
 WORKDIR /app
 
-# Copy package files first to leverage Docker cache
+# Install dependencies
 COPY package.json package-lock.json ./
+RUN npm install
 
-# Install dependencies (clean cache afterwards)
-RUN npm install --production && \
-    npm cache clean --force
-
-# Copy only necessary files for build
-COPY public/ public/
-COPY src/ src/
+# Copy the rest of the application
+COPY . .
 
 # Build the app
 RUN npm run build
 
-# Stage 2: Serve with nginx
+# Serve the app with a simple HTTP server
 FROM nginx:alpine
+COPY --from=build /app/build /usr/share/nginx/html
 
-# Remove default nginx website
-RUN rm -rf /usr/share/nginx/html/*
-
-# Switch to non-root user and set permissions
-RUN chown -R nginx:nginx /usr/share/nginx/html && \
-    chmod -R 755 /usr/share/nginx/html && \
-    chown -R nginx:nginx /var/cache/nginx && \
-    chown -R nginx:nginx /var/log/nginx && \
-    chown -R nginx:nginx /etc/nginx/conf.d && \
-    touch /var/run/nginx.pid && \
-    chown -R nginx:nginx /var/run/nginx.pid
-
-# Copy built assets from build stage
-COPY --from=build --chown=nginx:nginx /app/build /usr/share/nginx/html
-
-# Switch to nginx user
-USER nginx
-
-# Expose port
+# Expose the port Nginx is running on
 EXPOSE 80
-
-# Start nginx
-CMD ["nginx", "-g", "daemon off;"]
