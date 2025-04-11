@@ -1,106 +1,45 @@
-version: 2.1  # Using CircleCI 2.1 configuration format
+version: 2.1
 
 jobs:
-  # Job to run backend tests
   test:
     docker:
-      - image: cimg/node:18.20.0  # Use Node.js 18.20.0 image
+      - image: cimg/node:18.20.0 # Updated image
     steps:
-      # Get the code from GitHub
       - checkout
-      
-      # Restore cached dependencies if available
       - restore_cache:
           keys:
             - v1-dependencies-{{ checksum "globalPaymentsPlatform/backend/package-lock.json" }}
-            - v1-dependencies-  # Fallback cache key
-      
-      # Install backend dependencies
+            - v1-dependencies-
       - run:
           name: Install Dependencies in Backend
           command: cd globalPaymentsPlatform/backend && npm install
-      
-      # Update any known deprecated packages
       - run:
           name: Update Deprecated Packages
           command: |
             cd globalPaymentsPlatform/backend
             npm update inflight glob
-      
-      # Set up MongoDB connection for testing
       - run:
           name: Connect to MongoDB Atlas
           command: |
             cd globalPaymentsPlatform/backend
             MONGO_URI=$(echo $MONGODB_URI | sed 's/test/test-ci/')
             export MONGO_URI
-      
-      # Seed test data if needed
       - run:
           name: Seed Test Data (if needed)
           command: |
             cd globalPaymentsPlatform/backend
             node seed-data.js
-      
-      # Save dependencies to cache for future runs
       - save_cache:
           paths:
             - globalPaymentsPlatform/backend/node_modules
           key: v1-dependencies-{{ checksum "globalPaymentsPlatform/backend/package-lock.json" }}
-      
-      # Run the actual tests
       - run:
           name: Run Tests
           command: |
             cd globalPaymentsPlatform/backend
-            npm test -- --detectOpenHandles  # Run tests with open handles detection
+            npm test -- --detectOpenHandles
 
-  # Job to build and push Docker images
-  build_and_push:
-    docker:
-      - image: docker:24.0.7  # Use Docker image for building
-    steps:
-      # Get the code from GitHub
-      - checkout
-      
-      # Set up Docker environment
-      - setup_remote_docker:
-          docker_layer_caching: true  # Enable caching for faster builds
-      
-      # Log in to Docker Hub using stored credentials
-      - run:
-          name: Login to Docker Hub
-          command: |
-            echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-      
-      # Build and push backend Docker image
-      - run:
-          name: Build and Push Backend
-          command: |
-            cd globalPaymentsPlatform/backend
-            docker build -t st10067544/globalpayments-backend:latest .
-            docker push st10067544/globalpayments-backend:latest
-      
-      # Build and push frontend Docker image
-      - run:
-          name: Build and Push Frontend
-          command: |
-            cd globalPaymentsPlatform/frontend
-            docker build -t st10067544/globalpayments-frontend:latest .
-            docker push st10067544/globalpayments-frontend:latest
-
-# Workflow definition
 workflows:
-  test_and_deploy:
+  test:
     jobs:
-      # First run tests
       - test
-      
-      # Then build and push images, but only:
-      - build_and_push:
-          requires:
-            - test  # Only if tests pass
-          filters:
-            branches:
-              only:
-                - main  # Only on main branch pushes
