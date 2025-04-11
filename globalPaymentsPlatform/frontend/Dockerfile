@@ -3,10 +3,12 @@ FROM node:16 AS build
 
 # Set working directory with strict permissions
 WORKDIR /app
-RUN chmod -R 755 /app && \
-    chown -R nobody:nobody /app
 
-# 1. Copy package files (line 11 - no --chown, root-owned)
+# Use existing UID/GID 65534 (typically nobody/nogroup)
+RUN chmod -R 755 /app && \
+    chown -R 65534:65534 /app
+
+# 1. Copy package files
 COPY package.json package-lock.json ./
 
 # Install dependencies safely
@@ -14,12 +16,12 @@ RUN npm install --production --ignore-scripts --audit=false && \
     npm cache clean --force && \
     find node_modules/ -name "*.sh" -delete
 
-# 2. Copy application files (lines 19-20 - no --chown)
+# 2. Copy application files
 COPY public/ public/
 COPY src/ src/
 
-# Build with nobody user
-USER nobody
+# Build with nobody user (using numeric UID)
+USER 65534
 RUN npm run build
 
 # Stage 2: Production
