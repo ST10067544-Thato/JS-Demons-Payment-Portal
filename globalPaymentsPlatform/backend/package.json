@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test": "jest",
-    "start": "npm run dev",
+    "start": "node server.js",
     "build": "echo 'Build step not defined'",
     "dev": "nodemon server.js"
   },
@@ -28,7 +28,8 @@
   },
   "devDependencies": {
     "supertest": "^7.0.0",
-    "jest": "^29.7.0" 
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.9"
   },
   "jest": {
     "testTimeout": 10000
