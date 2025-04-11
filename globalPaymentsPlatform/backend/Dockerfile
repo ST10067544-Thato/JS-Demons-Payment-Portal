@@ -8,7 +8,7 @@ WORKDIR /app
 RUN chown -R appuser:appuser /app
 
 # Copy package files first (optimization)
-COPY package.json package-lock.json ./
+COPY --chown=appuser:appuser package.json package-lock.json ./
 
 # Install all dependencies (including devDependencies)
 RUN npm install --include=dev
@@ -17,7 +17,7 @@ RUN npm install --include=dev
 USER appuser
 
 # Copy application code
-COPY . .
+COPY --chown=appuser:appuser . .
 
 EXPOSE 5000
 

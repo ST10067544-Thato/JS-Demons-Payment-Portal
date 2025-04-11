@@ -33,8 +33,8 @@ RUN chown -R nginx:nginx /usr/share/nginx/html && \
     touch /var/run/nginx.pid && \
     chown -R nginx:nginx /var/run/nginx.pid
 
-# Copy built assets from build stage (Line 37 - removed --chown)
-COPY --from=build /app/build /usr/share/nginx/html
+# Copy built assets from build stage
+COPY --from=build --chown=nginx:nginx /app/build /usr/share/nginx/html
 
 # Switch to nginx user
 USER nginx
