@@ -6,26 +6,27 @@ RUN useradd -m appuser
 # Set working directory
 WORKDIR /app
 
-# 1. First copy ONLY package files (safe)
+# Copy package files first (as root)
 COPY package.json package-lock.json ./
 
-# 2. Install production dependencies
+# Install production dependencies (as root)
 RUN npm install --production && \
     npm cache clean --force
 
-# 3. COPY ONLY NEEDED DIRECTORIES (not wildcard .)
-COPY --chown=appuser:appuser app.js server.js ./
-COPY --chown=appuser:appuser routes/ routes/
-COPY --chown=appuser:appuser middleWare/ middleWare/
-COPY --chown=appuser:appuser models/ models/
-COPY --chown=appuser:appuser db/ db/
+# Copy ONLY needed files/dirs (NO --chown, NO wildcard .)
+COPY app.js server.js ./
+COPY routes/ routes/
+COPY middleWare/ middleWare/
+COPY models/ models/
+COPY db/ db/
 
-# 4. Set SAFE permissions (read-only for appuser)
-RUN chmod -R 550 /app && \          
-    chmod 640 /app/db/config.js && \ 
-    chmod 750 /app/db               
+# Set STRICT read-only permissions (no write access)
+RUN chmod -R 444 /app && \          
+    find /app -type d -exec chmod 555 {} \; && \  
+    chmod 440 /app/db/config.js && \ 
+    chmod 550 /app/db               
 
-# Switch to non-root user
+# Switch to non-root user (files still owned by root)
 USER appuser
 
 EXPOSE 5000
