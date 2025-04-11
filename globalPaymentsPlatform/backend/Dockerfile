@@ -16,10 +16,9 @@ RUN npm install --include=dev
 # Switch to non-root user
 USER appuser
 
-# Copy ONLY what’s needed (safer than `COPY . .`)
-COPY --chown=appuser:appuser src/ src/
-COPY --chown=appuser:appuser public/ public/
-COPY --chown=appuser:appuser *.js ./
+# Copy application code
+COPY . .
 
 EXPOSE 5000
+
 CMD ["npm", "run", "dev"]
