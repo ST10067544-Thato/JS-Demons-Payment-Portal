@@ -4,13 +4,13 @@ FROM node:16 AS build
 # Set working directory with strict permissions
 WORKDIR /app
 
-# Create a non-root user with home directory
-RUN mkdir -p /home/node && \
-    groupadd -g 1000 node && \
-    useradd -u 1000 -g node -d /home/node node && \
-    chown -R node:node /home/node && \
-    chmod -R 755 /app && \
+# Use existing node user (UID 1000) and set proper permissions
+RUN chmod -R 755 /app && \
     chown -R node:node /app
+
+# Set npm config to use tmp directory
+ENV NPM_CONFIG_CACHE=/tmp/.npm \
+    NPM_CONFIG_PREFIX=/tmp/.npm
 
 # Copy package files
 COPY package.json package-lock.json ./
@@ -26,7 +26,6 @@ COPY src/ src/
 
 # Build with non-root user
 USER node
-ENV NPM_CONFIG_CACHE=/tmp/.npm
 RUN npm run build
 
 # Stage 2: Production
