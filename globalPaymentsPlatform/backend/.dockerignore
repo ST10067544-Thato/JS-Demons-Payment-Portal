@@ -1,10 +1,7 @@
+.env
+.git
 node_modules
-npm-debug.log
+*.md
+*.log
 Dockerfile
 .dockerignore
-.git
-.gitignore
-.env
-*.md
-dist/
-coverage/

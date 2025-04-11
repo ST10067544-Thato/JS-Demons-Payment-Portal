@@ -4,20 +4,20 @@ services:
     build:
       context: ./backend
     ports:
-      - "5000:5000"
-    # Only add depends_on if frontend is actually needed for backend to start
-    # depends_on:
-    #   - frontend
-    # Typically you'd want to add restart policy for production
+      - "5000:5000"  # Keep this as is for backend
+    env_file:
+      - ./backend/.env
+    environment:
+      - NODE_ENV=development
     restart: unless-stopped
 
   frontend:
     build:
       context: ./frontend
     ports:
-      - "80:80"
+      - "3000:80"  # Host:3000 → Container:80
     environment:
-      - REACT_APP_API_URL=http://backend:5000
+      - REACT_APP_API_URL=http://localhost:5000 
     depends_on:
       - backend
     restart: unless-stopped

@@ -1,23 +1,24 @@
-# Use official Node.js image from Docker Hub as base image
 FROM node:16
 
-# Set the working directory inside the container
+# Create non-root user
+RUN useradd -m appuser
+
+# Set working directory and permissions
 WORKDIR /app
+RUN chown -R appuser:appuser /app
 
-# Copy package.json and package-lock.json (if it exists)
-COPY package.json package-lock.json ./
+# Copy package files first (optimization)
+COPY --chown=appuser:appuser package.json package-lock.json ./
 
-# Install project dependencies (including dotenv)
-RUN npm install
+# Install all dependencies (including devDependencies)
+RUN npm install --include=dev
 
-# Install nodemon globally for development
-RUN npm install -g nodemon
+# Switch to non-root user
+USER appuser
 
-# Copy the rest of the application code to the container
-COPY . .
+# Copy application code
+COPY --chown=appuser:appuser . .
 
-# Expose the port your app will run on
 EXPOSE 5000
 
-# Start the app using npm (using 'dev' script with nodemon)
 CMD ["npm", "run", "dev"]
