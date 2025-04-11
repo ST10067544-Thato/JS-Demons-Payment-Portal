@@ -1,0 +1,23 @@
+version: '3'
+services:
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - "5000:5000"  # Keep this as is for backend
+    env_file:
+      - ./backend/.env
+    environment:
+      - NODE_ENV=development
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "3000:80"  # Host:3000 → Container:80
+    environment:
+      - REACT_APP_API_URL=http://localhost:5000 
+    depends_on:
+      - backend
+    restart: unless-stopped
