@@ -3,29 +3,23 @@ FROM node:16
 # Create non-root user
 RUN useradd -m appuser
 
-# Set working directory
+# Set working directory and permissions
 WORKDIR /app
+RUN chown -R appuser:appuser /app
 
-# Copy package files first (as root)
+# Copy package files first (optimization)
 COPY package.json package-lock.json ./
 
-# Install production dependencies (as root)
-RUN npm install --production && \
-    npm cache clean --force
-
-# Copy application files (as root)
-COPY . .
-
-# Fix permissions:
-# - Give appuser read access to all files
-# - Remove write permissions globally
-RUN chown -R appuser:appuser /app && \
-    chmod -R 550 /app && \          
-    chmod 640 /app/db/config.js && \ 
-    chmod -R 750 /app/db           
+# Install all dependencies (including devDependencies)
+RUN npm install --include=dev
 
 # Switch to non-root user
 USER appuser
 
+# Copy ONLY what’s needed (safer than `COPY . .`)
+COPY --chown=appuser:appuser src/ src/
+COPY --chown=appuser:appuser public/ public/
+COPY --chown=appuser:appuser *.js ./
+
 EXPOSE 5000
-CMD ["node", "server.js"]
+CMD ["npm", "run", "dev"]
