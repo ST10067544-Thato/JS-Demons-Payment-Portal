@@ -1,99 +1,119 @@
-version: 2.1
+version: 2.1  # CircleCI version
+
+# ======================
+# JOBS (Work Tasks)
+# ======================
 
 jobs:
+  # Job 1: Run all tests
   test:
     docker:
-      - image: cimg/node:18.20.0
+      - image: cimg/node:18.20.0  # Use Node.js 18.20.0 as the test environment
     steps:
-      - checkout
+      - checkout  # Grab the latest code from GitHub/GitLab
+
+      # Restore saved dependencies (like reusing downloaded tools)
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "globalPaymentsPlatform/backend/package-lock.json" }}
-            - v1-dependencies-
+            - v1-dependencies-{{ checksum "globalPaymentsPlatform/backend/package-lock.json" }}  # Match exact version
+            - v1-dependencies-  # Fallback to any cached version
+
+      # Install/update required libraries
       - run:
-          name: Install Dependencies in Backend
-          command: cd globalPaymentsPlatform/backend && npm install
-      - run:
-          name: Update Deprecated Packages
+          name: Install Dependencies
           command: |
             cd globalPaymentsPlatform/backend
-            npm update inflight glob
+            npm install  # Download backend tools
+            npm update inflight glob  # Update two specific tools
+
+      # Adjust database connection for testing
       - run:
-          name: Connect to MongoDB Atlas
+          name: Set MongoDB URI for CI
           command: |
-            cd globalPaymentsPlatform/backend
-            MONGO_URI=$(echo $MONGODB_URI | sed 's/test/test-ci/')
-            export MONGO_URI
-      - run:
-          name: Seed Test Data (if needed)
-          command: |
-            cd globalPaymentsPlatform/backend
-            node seed-data.js
+            echo 'export MONGO_URI="${MONGODB_URI/test/test-ci}"' >> $BASH_ENV  # Change "test" to "test-ci" in the DB link
+
+      # Save downloaded tools for future runs (like packing unused tools in a box)
       - save_cache:
           paths:
-            - globalPaymentsPlatform/backend/node_modules
+            - globalPaymentsPlatform/backend/node_modules  # Save backend tools
           key: v1-dependencies-{{ checksum "globalPaymentsPlatform/backend/package-lock.json" }}
+          when: always  # Keep even if tests fail
+
+      # Run the actual tests
       - run:
           name: Run Tests
           command: |
             cd globalPaymentsPlatform/backend
-            npm test -- --detectOpenHandles
+            npm test -- --detectOpenHandles --forceExit  # Test with extra safety checks
 
-  # New job to build Docker images without pushing
+  # Job 2: Build Docker test images (trial versions)
   build_images:
     docker:
-      - image: docker:24.0.7
+      - image: docker:24.0.7  # Use Docker 24.0.7 to build containers
     steps:
-      - checkout
-      - setup_remote_docker:
-          docker_layer_caching: true
+      - checkout  # Grab code again
+      - setup_remote_docker:  # Enable Docker-in-Docker (like a toolbox within a toolbox)
+          docker_layer_caching: true  # Reuse unchanged container layers
+
+      # Build backend container (trial version)
       - run:
           name: Build Backend Image
           command: |
             cd globalPaymentsPlatform/backend
-            docker build -t st10067544/globalpayments-backend:test .
+            docker build -t st10067544/globalpayments-backend:test .  # Package backend as "test" container
+
+      # Build frontend container (trial version)
       - run:
           name: Build Frontend Image
           command: |
             cd globalPaymentsPlatform/frontend
-            docker build -t st10067544/globalpayments-frontend:test .
+            docker build -t st10067544/globalpayments-frontend:test .  # Package frontend as "test" container
 
-  # Modified build_and_push job that only runs on main
+  # Job 3: Deploy final containers (only on main branch)
   build_and_push:
     docker:
-      - image: docker:24.0.7
+      - image: docker:24.0.7  # Need Docker again
     steps:
       - checkout
       - setup_remote_docker:
           docker_layer_caching: true
+
+      # Log in to Docker Hub (like signing in to an app store)
       - run:
           name: Login to Docker Hub
           command: |
             echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+
+      # Build and upload backend (final version)
       - run:
           name: Build and Push Backend
           command: |
             cd globalPaymentsPlatform/backend
-            docker build -t st10067544/globalpayments-backend:latest .
-            docker push st10067544/globalpayments-backend:latest
+            docker build -t st10067544/globalpayments-backend:latest .  # Package as "latest"
+            docker push st10067544/globalpayments-backend:latest  # Upload to Docker Hub
+
+      # Build and upload frontend (final version)
       - run:
           name: Build and Push Frontend
           command: |
             cd globalPaymentsPlatform/frontend
-            docker build -t st10067544/globalpayments-frontend:latest .
-            docker push st10067544/globalpayments-frontend:latest
+            docker build -t st10067544/globalpayments-frontend:latest .  # Package as "latest"
+            docker push st10067544/globalpayments-frontend:latest  # Upload to Docker Hub
 
+# ======================
+# WORKFLOW (Task Order)
+# ======================
 workflows:
   test_and_deploy:
     jobs:
-      - test
-      - build_images:
+      - test  # First: Run tests
+      - build_images:  # Second: Build trial containers
           requires:
-            - test
-      - build_and_push:
+            - test  # Wait until tests pass
+      - build_and_push:  # Third: Deploy final containers
           requires:
-            - build_images
+            - build_images  # Wait until builds finish
           filters:
             branches:
               only:
-                - main
+                - main  # Only deploy from the main branch (safety check!)
